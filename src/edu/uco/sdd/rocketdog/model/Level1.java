@@ -19,7 +19,10 @@ public class Level1 extends Scene implements Level {
     BadGuy hench;
     BadGuy hench2;
     ArrayList<BadGuy> BadGuys;
-
+    Hitbox hitbox;
+    ArrayList<Hitbox> Hitboxes;
+    boolean visibleHitboxes = false;
+    
     public Level1(StackPane root, int x, int y) {
         super(root, x, y);
 
@@ -34,6 +37,11 @@ public class Level1 extends Scene implements Level {
         EntityClass player = new EntityClass("Player");
         rd.addEntityClass(player, 1);
         root.getChildren().add(rd.sprite);
+        hitbox = new Hitbox(rd.getPosition(),130,130,rd);
+        root.getChildren().add(hitbox.getHitbox());
+        
+        Hitboxes = new ArrayList();
+        //Hitboxes.add(hitbox);
 
         // Bad Guys
         BadGuys = new ArrayList();
@@ -41,10 +49,18 @@ public class Level1 extends Scene implements Level {
         enemy.setRelationship(player, EntityClass.Relationship.ENEMY);
         BadGuys.add(new BadGuy.Builder("/Ugly Dog.png",32,32).setX(650).setY(700).setEntityClass(enemy).build());
         BadGuys.add(new BadGuy.Builder("/Ugly Dog.png",64,64).setX(500).setY(700).setEntityClass(enemy).build());
+        Hitbox bguy = new Hitbox(BadGuys.get(0).getPosition(),32,32,BadGuys.get(0));
+        Hitboxes.add(bguy);
+        bguy = new Hitbox(BadGuys.get(1).getPosition(),64,64,BadGuys.get(1));
+        Hitboxes.add(bguy);
         
         // Add to view
         for (BadGuy b : BadGuys) {
             root.getChildren().add(b.sprite);
+        }
+        
+        for (Hitbox h : Hitboxes){
+            root.getChildren().add(h.getHitbox());
         }
 
         // Set Controls
@@ -55,6 +71,11 @@ public class Level1 extends Scene implements Level {
               case RIGHT: deltax =  10; break;
               case UP:    deltay = -10; break;
               case DOWN:  deltay =  10; break;
+              case H: if (visibleHitboxes) {
+                  visibleHitboxes = false;
+              } else {
+                  visibleHitboxes = true;
+              }
             }
             rd.setPosition(rd.getPosition().add(deltax, deltay));
         });
@@ -63,6 +84,9 @@ public class Level1 extends Scene implements Level {
     @Override
     public void update() {
         rd.update();
+        hitbox.update();
+        hitbox.setShown(visibleHitboxes);
+        
         Map<Entity, Boolean> changed = new HashMap<>();
         for (BadGuy b: BadGuys) {
             changed.put(b, true);
@@ -73,6 +97,12 @@ public class Level1 extends Scene implements Level {
         }
         for (BadGuy b: BadGuys) {
           b.update();
+        }
+        for (Hitbox h: Hitboxes){
+            h.update();
+            h.setShown(visibleHitboxes);
+            hitbox.intersectionCheck(h.getHitbox());
+            h.intersectionCheck(hitbox.getHitbox());
         }
     }
 }
