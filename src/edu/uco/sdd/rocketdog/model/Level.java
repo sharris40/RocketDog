@@ -14,6 +14,9 @@ public class Level extends Scene {
 
     final private RocketDog rocketDog;
     final private EntityClass player;
+    final private ArrayList<LaserWeapon> weapon;
+    //final private LaserWeapon weapon;
+    final private LargeLaserWeapon largeWeapon;
     private ArrayList<Enemy> enemies;
     private boolean visibleHitBoxes;
     private StackPane root;
@@ -27,6 +30,9 @@ public class Level extends Scene {
         keyMapping = new KeyMappingContext();
         visibleHitBoxes = false;
         rocketDog = new RocketDog();
+        //weapon = new LaserWeapon();
+        weapon = new ArrayList();
+        largeWeapon = new LargeLaserWeapon();
         player = new EntityClass("Player");
         enemies = new ArrayList();
 
@@ -41,10 +47,31 @@ public class Level extends Scene {
         rocketDog.getHitbox().setHeight(130);
         root.getChildren().add(rocketDog.getSprite());
         root.getChildren().add(rocketDog.getHitbox());
+        
+        //Laser Weapon information added to game
+        for(int i = 0; i < 3; i++){
+            weapon.add(new LaserWeapon());
+            getLaserWeapon(i).setPosition(new Point2D(100,600));
+            getLaserWeapon(i).getHitbox().setWidth(44);
+            getLaserWeapon(i).getHitbox().setHeight(44);
+            root.getChildren().add(getLaserWeapon(i).getSprite());
+            root.getChildren().add(getLaserWeapon(i).getHitbox());
+            //weapon.getHitbox().setWidth(44);
+            //weapon.getHitbox().setHeight(44);
+            //root.getChildren().add(weapon.getSprite());
+            //root.getChildren().add(weapon.getHitbox());
+        }
+          
+        //Large Laser Weapon information added to game
+        largeWeapon.setPosition(new Point2D(100,600));
+        largeWeapon.getHitbox().setWidth(200);
+        largeWeapon.getHitbox().setHeight(133);
+        root.getChildren().add(largeWeapon.getSprite());
+        root.getChildren().add(largeWeapon.getHitbox());
 
         //Keyboard Handling
         this.setOnKeyPressed((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyPressed(this, event, 10.0d);
+            keyMapping.getKeyMapping().handleKeyPressed(this, event, 5.0d);
         });
 
         this.setOnKeyReleased((KeyEvent event) -> {
@@ -66,6 +93,14 @@ public class Level extends Scene {
 
     public EntityClass getPlayer() {
         return player;
+    }
+    
+    public LaserWeapon getLaserWeapon(int i){
+        return weapon.get(i);
+    }
+    
+    public LargeLaserWeapon getLargeLaserWeapon(){
+        return largeWeapon;
     }
 
     public void addEnemy(Enemy enemy, double width, double height) {
@@ -98,11 +133,25 @@ public class Level extends Scene {
             root.getChildren().remove(enemy.getHitbox());
         }
     }
-
+    
+    public int checkFired(){
+        for(int i = 0; i < weapon.size(); i++){
+            if(weapon.get(i).getPosition().getX() > root.getWidth()){
+                 weapon.get(i).setDead(false);
+            }
+            if(!weapon.get(i).isDead()){
+                weapon.get(i).setDead(true);
+                return i;    
+            }
+           
+        }
+        return -1;        
+    }
+    
     public void setVisibleHitBoxes(boolean value) {
         visibleHitBoxes = value;
     }
-
+    
     public void update() {
 
         //Update RocketDog
@@ -110,7 +159,22 @@ public class Level extends Scene {
 
         //Set rocketDog hitbox visibility
         rocketDog.getHitbox().setVisible(visibleHitBoxes);
-
+        
+        //Update the weapon attack
+        weapon.stream().forEach((laser) ->{
+            laser.update();
+        });
+        //weapon.update();
+        
+        //Set weapon hitbox visibility
+        //weapon.getHitbox().setVisible(visibleHitBoxes);
+        
+        //Update the large weapon attack
+        largeWeapon.update();
+        
+        //Set large weapon hitbox visibility
+        largeWeapon.getHitbox().setVisible(visibleHitBoxes);
+        
         Map<Entity, Boolean> changed = new HashMap<>();
         changed.put(rocketDog, true);
 
