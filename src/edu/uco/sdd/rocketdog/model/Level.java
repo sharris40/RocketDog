@@ -16,7 +16,7 @@ public class Level extends Scene {
     final private EntityClass player;
     final private ArrayList<LaserWeapon> weapon;
     //final private LaserWeapon weapon;
-    final private LargeLaserWeapon largeWeapon;
+    final private ArrayList<LargeLaserWeapon> largeWeapon;
     private ArrayList<Enemy> enemies;
     private boolean visibleHitBoxes;
     private StackPane root;
@@ -32,7 +32,8 @@ public class Level extends Scene {
         rocketDog = new RocketDog();
         //weapon = new LaserWeapon();
         weapon = new ArrayList();
-        largeWeapon = new LargeLaserWeapon();
+        //largeWeapon = new LargeLaserWeapon();
+        largeWeapon = new ArrayList();
         player = new EntityClass("Player");
         enemies = new ArrayList();
 
@@ -63,11 +64,15 @@ public class Level extends Scene {
         }
           
         //Large Laser Weapon information added to game
-        largeWeapon.setPosition(new Point2D(100,600));
-        largeWeapon.getHitbox().setWidth(200);
-        largeWeapon.getHitbox().setHeight(133);
-        root.getChildren().add(largeWeapon.getSprite());
-        root.getChildren().add(largeWeapon.getHitbox());
+        for(int i = 0; i < 3; i++){
+            largeWeapon.add(new LargeLaserWeapon());
+            getLargeLaserWeapon(i).setPosition(new Point2D(100,600));
+            getLargeLaserWeapon(i).getHitbox().setWidth(200);
+            getLargeLaserWeapon(i).getHitbox().setHeight(133);
+            root.getChildren().add(getLargeLaserWeapon(i).getSprite());
+            root.getChildren().add(getLargeLaserWeapon(i).getHitbox());
+        }
+        
 
         //Keyboard Handling
         this.setOnKeyPressed((KeyEvent event) -> {
@@ -99,8 +104,8 @@ public class Level extends Scene {
         return weapon.get(i);
     }
     
-    public LargeLaserWeapon getLargeLaserWeapon(){
-        return largeWeapon;
+    public LargeLaserWeapon getLargeLaserWeapon(int i){
+        return largeWeapon.get(i);
     }
 
     public void addEnemy(Enemy enemy, double width, double height) {
@@ -134,7 +139,7 @@ public class Level extends Scene {
         }
     }
     
-    public int checkFired(){
+    public int checkFiredLaser(){
         for(int i = 0; i < weapon.size(); i++){
             if(weapon.get(i).getPosition().getX() > root.getWidth()){
                  weapon.get(i).setDead(false);
@@ -146,6 +151,20 @@ public class Level extends Scene {
            
         }
         return -1;        
+    }
+    
+    public int checkFiredLargerLaser(){
+         for(int i = 0; i < largeWeapon.size(); i++){
+            if(largeWeapon.get(i).getPosition().getX() > root.getWidth()){
+                 largeWeapon.get(i).setDead(false);
+            }
+            if(!largeWeapon.get(i).isDead()){
+                largeWeapon.get(i).setDead(true);
+                return i;    
+            }
+           
+        }
+        return -1;       
     }
     
     public void setVisibleHitBoxes(boolean value) {
@@ -163,6 +182,7 @@ public class Level extends Scene {
         //Update the weapon attack
         weapon.stream().forEach((laser) ->{
             laser.update();
+            //laser.getHitbox().setVisible(visibleHitBoxes);
         });
         //weapon.update();
         
@@ -170,10 +190,14 @@ public class Level extends Scene {
         //weapon.getHitbox().setVisible(visibleHitBoxes);
         
         //Update the large weapon attack
-        largeWeapon.update();
+        largeWeapon.stream().forEach((largeLaser) ->{
+            largeLaser.update();
+            largeLaser.getHitbox().setVisible(visibleHitBoxes);
+        });
+        //largeWeapon.update();
         
         //Set large weapon hitbox visibility
-        largeWeapon.getHitbox().setVisible(visibleHitBoxes);
+        //largeWeapon.getHitbox().setVisible(visibleHitBoxes);
         
         Map<Entity, Boolean> changed = new HashMap<>();
         changed.put(rocketDog, true);
