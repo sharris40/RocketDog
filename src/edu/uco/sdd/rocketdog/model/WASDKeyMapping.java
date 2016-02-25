@@ -22,6 +22,24 @@ public class WASDKeyMapping implements KeyMapping {
             case S:
                 currentLevel.getRocketDog().setVelocity(new Point2D(currentLevel.getRocketDog().getVelocity().getX(), speed));
                 break;
+            case J:
+                int i = currentLevel.checkFiredLaser();
+                if(i == -1)
+                    break;
+                currentLevel.getLaserWeapon(i).setVisableOn();
+                currentLevel.getLaserWeapon(i).setPosition(new Point2D(currentLevel.getRocketDog().getPosition().getX()+100, 
+                                                                      currentLevel.getRocketDog().getPosition().getY()+65));
+                currentLevel.getLaserWeapon(i).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
+                break;
+            case K:
+                int j = currentLevel.checkFiredLargerLaser();
+                if(j == -1)
+                    break;
+                currentLevel.getLargeLaserWeapon(j).setVisableOn();
+                currentLevel.getLargeLaserWeapon(j).setPosition(new Point2D(currentLevel.getRocketDog().getPosition().getX()+100, 
+                                                                      currentLevel.getRocketDog().getPosition().getY()+15));
+                currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
+                break;
             case F1:
                 currentLevel.getRocketDog().setAnimation(new SpitzChargeGunAnimateStrategy());
                 break;
