@@ -162,7 +162,6 @@ public class Level extends Scene {
                 largeWeapon.get(i).setDead(true);
                 return i;    
             }
-           
         }
         return -1;       
     }
