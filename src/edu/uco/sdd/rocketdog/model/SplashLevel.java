@@ -74,6 +74,8 @@ public class SplashLevel extends Scene implements ILevel {
         loadImages();
         soundManager.playBgSound("bgmusic.mp3");
         soundManager.playAmSound("forest.mp3");
+        soundManager.muteBgSound(true);
+        soundManager.muteAmSound(true);
 
         /**
          * *****************START APPLICATION******************
@@ -108,8 +110,8 @@ public class SplashLevel extends Scene implements ILevel {
         /**
          * *****************KEYBOARD KEY MAPPING******************
          */
-        musicSlider = new Slider(0.0, 1.0, 1.0);
-        ambientSlider = new Slider(0.0, 1.0, 1.0);
+        musicSlider = new Slider(0.0, 1.0, .5);
+        ambientSlider = new Slider(0.0, 1.0, .5);
         optionsButton.setOnAction((ActionEvent) -> {
             try{grid=createOptionsGridPane();}
             catch(Exception e){System.out.println("createOptionsGridPane");}
@@ -157,6 +159,12 @@ public class SplashLevel extends Scene implements ILevel {
                     ck.setSelected(false);
             }
         });
+       
+        if(ck.isSelected()){                
+            soundManager.playBgSound(.5);
+            soundManager.playAmSound("forest.mp3");
+        }
+        
     }
     private void loadImages() {
            // load all needed images
@@ -215,7 +223,7 @@ public class SplashLevel extends Scene implements ILevel {
         GridPane.setConstraints(optionsWASDButton, 1, 3);
         GridPane.setConstraints(optionsCloseButton, 2, 3);// u can always add this to anchorpane instead
 
-        //Sound constraints
+        // ***** Sound constraints ***********
         GridPane.setConstraints(soundLabel, 0, 4);
         sepHor.setValignment(VPos.CENTER);
         GridPane.setConstraints(sepHor, 0, 5);
