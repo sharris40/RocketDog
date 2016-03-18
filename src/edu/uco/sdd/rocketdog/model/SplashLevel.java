@@ -74,8 +74,6 @@ public class SplashLevel extends Scene implements ILevel {
         loadImages();
         soundManager.playBgSound("bgmusic.mp3");
         soundManager.playAmSound("forest.mp3");
-        soundManager.muteBgSound(true);
-        soundManager.muteAmSound(true);
 
         /**
          * *****************START APPLICATION******************
@@ -110,8 +108,8 @@ public class SplashLevel extends Scene implements ILevel {
         /**
          * *****************KEYBOARD KEY MAPPING******************
          */
-        musicSlider = new Slider(0.0, 1.0, .5);
-        ambientSlider = new Slider(0.0, 1.0, .5);
+        musicSlider = new Slider(0.0, 1.0, .2);
+        ambientSlider = new Slider(0.0, 1.0, .2);
         optionsButton.setOnAction((ActionEvent) -> {
             try{grid=createOptionsGridPane();}
             catch(Exception e){System.out.println("createOptionsGridPane");}
@@ -156,13 +154,13 @@ public class SplashLevel extends Scene implements ILevel {
                         this.setOnKeyPressed((KeyEvent event) -> {
             switch (event.getCode()) {
                 case L:
-                    ck.setSelected(false);
+                    ck.setSelected(true);
             }
         });
        
         if(ck.isSelected()){                
-            soundManager.playBgSound(.5);
-            soundManager.playAmSound("forest.mp3");
+            soundManager.playBgSound(musicSlider.getValue());
+            soundManager.playAmSound(.2);
         }
         
     }
