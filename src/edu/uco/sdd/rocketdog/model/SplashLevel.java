@@ -66,6 +66,7 @@ public class SplashLevel extends Scene implements ILevel {
         isDone = false;
         this.root = root;
         ck= new CheckBox("Enable");
+        ck.setSelected(true);
         HBox hboxTop= addHBox();
         HBox hboxBottom=addHBox();
         soundManager= new SoundManager();
@@ -108,8 +109,8 @@ public class SplashLevel extends Scene implements ILevel {
         /**
          * *****************KEYBOARD KEY MAPPING******************
          */
-        musicSlider = new Slider(0.0, 1.0, .2);
-        ambientSlider = new Slider(0.0, 1.0, .2);
+        musicSlider = new Slider(0.0, 1.0, .5);
+        ambientSlider = new Slider(0.0, 1.0, .5);
         optionsButton.setOnAction((ActionEvent) -> {
             try{grid=createOptionsGridPane();}
             catch(Exception e){System.out.println("createOptionsGridPane");}
@@ -160,7 +161,7 @@ public class SplashLevel extends Scene implements ILevel {
        
         if(ck.isSelected()){                
             soundManager.playBgSound(musicSlider.getValue());
-            soundManager.playAmSound(.2);
+            soundManager.playAmSound(musicSlider.getValue());
         }
         
     }
