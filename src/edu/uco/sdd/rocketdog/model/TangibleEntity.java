@@ -142,7 +142,7 @@ public abstract class TangibleEntity implements Entity{
         return dead;
     }
 
-    protected void setDead(boolean dead) {
+    public void setDead(boolean dead) {
         this.dead = dead;
     }
 
