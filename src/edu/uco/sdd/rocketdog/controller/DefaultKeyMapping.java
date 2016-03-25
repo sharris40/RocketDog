@@ -2,6 +2,7 @@ package edu.uco.sdd.rocketdog.controller;
 
 import edu.uco.sdd.rocketdog.model.Animations.SpitzChargeGunAnimateStrategy;
 import edu.uco.sdd.rocketdog.model.Animations.SpitzDeadAnimateStrategy;
+import edu.uco.sdd.rocketdog.model.Animations.SpitzIdleAnimateStrategy;
 import edu.uco.sdd.rocketdog.model.FullHealthState;
 import edu.uco.sdd.rocketdog.model.Level;
 import edu.uco.sdd.rocketdog.model.SplashLevel;
@@ -56,25 +57,29 @@ public class DefaultKeyMapping implements KeyMapping {
                 }
                 break;
             case K:
-                int j = currentLevel.checkFiredLargerLaser();
-                if (j == -1) {
-                    break;
-                }
-                currentLevel.getLargeLaserWeapon(j).getHitbox().setStroke(Color.GREEN);
-                currentLevel.getLargeLaserWeapon(j).setVisableOn();
-                currentLevel.getLargeLaserWeapon(j).setPosition(new Point2D(currentLevel.getRocketDog().getPosition().getX() + 100,
-                        currentLevel.getRocketDog().getPosition().getY() + 15));
-                if (currentLevel.getRocketDog().getSprite().getScaleX() == -1) {
-                    currentLevel.getLargeLaserWeapon(j).getSprite().setScaleX(-1);
-                    currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(-speed, currentLevel.getRocketDog().getVelocity().getY()));
-                } else {
-                    currentLevel.getLargeLaserWeapon(j).getSprite().setScaleX(1);
-                    currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
+                int charge = currentLevel.largeLaserCharge();
+                if(charge == 3){
+                    int j = currentLevel.checkFiredLargerLaser();
+                    if (j == -1) {
+                        break;
+                    }
+                    currentLevel.getLargeLaserWeapon(j).getHitbox().setStroke(Color.GREEN);
+                    currentLevel.getLargeLaserWeapon(j).setVisableOn();
+                    currentLevel.getLargeLaserWeapon(j).setPosition(new Point2D(currentLevel.getRocketDog().getPosition().getX() + 100,
+                            currentLevel.getRocketDog().getPosition().getY() + 15));
+                    if (currentLevel.getRocketDog().getSprite().getScaleX() == -1) {
+                        currentLevel.getLargeLaserWeapon(j).getSprite().setScaleX(-1);
+                        currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(-speed, currentLevel.getRocketDog().getVelocity().getY()));
+                    } else {
+                        currentLevel.getLargeLaserWeapon(j).getSprite().setScaleX(1);
+                        currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
+                    }
                 }
                 break;
             case F1:
                 currentLevel.getRocketDog().setState(new FullHealthState(1000));
-                currentLevel.getRocketDog().setAnimation(new SpitzChargeGunAnimateStrategy());
+                currentLevel.getRocketDog().setDead(false);
+                currentLevel.getRocketDog().setAnimation(new SpitzIdleAnimateStrategy());
                 break;
             case F2:
                 currentLevel.getRocketDog().setAnimation(new SpitzDeadAnimateStrategy());
