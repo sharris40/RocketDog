@@ -4,7 +4,6 @@ import edu.uco.sdd.rocketdog.model.Entity;
 import edu.uco.sdd.rocketdog.model.Obstruction;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -14,8 +13,8 @@ public class ObjectTraverseController extends AccelerationController {
 
     private Obstruction target;
     private MovementController next;
-    private Point2D nextVelocity, nextAcceleration, destPoint, xVel, yVel, currVel;
-    private LinkedList<Point2D> path;
+    private Point2D nextVelocity, nextAcceleration, destPoint, lastPosition;
+    private final LinkedList<Point2D> path;
 
     public ObjectTraverseController(TangibleEntity entity, Obstruction target, MovementController nextController, Point2D nextVelocity, Point2D nextAcceleration) {
         super(entity);
@@ -137,16 +136,36 @@ public class ObjectTraverseController extends AccelerationController {
             }
         }
         path.add(destPoint);
+        lastPosition = controlledObject.getPosition();
     }
 
     @Override
     public boolean process(Map<Entity, Boolean> changedEntities) {
-        Bounds cbtemp = controlledObject.getHitbox().getBoundsInParent();
-        Bounds controlledBounds = new BoundingBox(cbtemp.getMinX() + nextVelocity.getX(), cbtemp.getMinY() + nextVelocity.getY(), cbtemp.getWidth(), cbtemp.getHeight());
-
-        if (controlledBounds.intersects(target.getHitbox().getBoundsInParent())) {
-            controlledObject.setVelocity(new Point2D(0, 0));
+        Point2D newPosition = controlledObject.getPosition();
+        boolean nextPoint = false;
+        if (newPosition.getX() - lastPosition.getX() > 0) {
+            if (newPosition.getX() - path.get(0).getX() >= 0)
+                nextPoint = true;
+        } else {
+            if (newPosition.getX() - path.get(0).getX() <= 0)
+                nextPoint = true;
         }
+        if (newPosition.getY() - lastPosition.getY() > 0) {
+            if (newPosition.getY() - path.get(0).getY() >= 0)
+                nextPoint = true;
+        } else {
+            if (newPosition.getY() - path.get(0).getY() <= 0)
+                nextPoint = true;
+        }
+        if (nextPoint)
+            path.remove();
+        if (path.isEmpty()) {
+            controlledObject.removeController(this);
+            controlledObject.addController(next);
+            return next.process(changedEntities);
+        }
+        lastPosition = newPosition;
+        controlledObject.setVelocity(path.get(0).subtract(lastPosition).normalize().multiply(nextVelocity.magnitude()));
         return true;
     }
 
