@@ -88,21 +88,21 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getDownSpeed()));
         }
 
-        
+
         if(this.getCurrentHealth() <= 0 && !this.isDead())
         {
             this.setDead(true);
             setAnimation(new SpitzDeadAnimateStrategy());
         }
-        
+
         /**
          * Moving the character is handled by the TangibleEntity class
          */
-//        getSprite().setLayoutX(getPosition().getX());
-//        getSprite().setTranslateY(getPosition().getY());
-//
-//        getHitbox().setLayoutX(getPosition().getX());
-//        getHitbox().setTranslateY(getPosition().getY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
+
+        getHitbox().setLayoutX(getPosition().getX());
+        getHitbox().setLayoutY(getPosition().getY());
 
         getSprite().setViewport(animating.getCurrentView());
         handle(); // Animations
