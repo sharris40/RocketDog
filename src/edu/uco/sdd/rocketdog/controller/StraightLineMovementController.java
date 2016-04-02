@@ -5,8 +5,6 @@ import edu.uco.sdd.rocketdog.model.Entity;
 import edu.uco.sdd.rocketdog.model.EntityClass;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import javafx.geometry.Point2D;
 
 public class StraightLineMovementController extends AccelerationController {
@@ -18,7 +16,7 @@ public class StraightLineMovementController extends AccelerationController {
   public void setVelocity(Point2D velocity) {
     controlledObject.setVelocity(velocity);
   }
-  
+
   public StraightLineMovementController(TangibleEntity entity) {
     super(entity);
   }
