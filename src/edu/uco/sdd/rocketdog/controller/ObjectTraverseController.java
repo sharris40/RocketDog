@@ -74,7 +74,7 @@ public class ObjectTraverseController extends AccelerationController {
         Bounds cbtemp = controlledObject.getHitbox().getBoundsInParent(),
                 targetBounds = target.getHitbox().getBoundsInParent(),
                 controlledBounds;
-        double x = cbtemp.getMinX(), y = cbtemp.getMinY(), width = cbtemp.getWidth(), height = cbtemp.getHeight(), vel = nextVelocity.magnitude();
+        double x = cbtemp.getMinX(), y = cbtemp.getMinY(), width = cbtemp.getWidth(), height = cbtemp.getHeight();
         Point2D velAdd = new Point2D(nextVelocity.getX(), nextVelocity.getY());
         do {
             x += velAdd.getX();
@@ -84,15 +84,7 @@ public class ObjectTraverseController extends AccelerationController {
         } while (controlledBounds.intersects(target.getHitbox().getBoundsInParent()));
         destPoint = new Point2D(x, y);
         boolean blockedUp = true, blockedDown = true, blockedLeft = true, blockedRight = true;
-        if (cbtemp.getMinX() + nextVelocity.getX() > targetBounds.getMaxX() || cbtemp.getMaxX() + nextVelocity.getX() < targetBounds.getMinX()) {
-            blockedRight = false;
-            blockedLeft = false;
-        } else if (nextVelocity.getX() > 0) { // moving right
-            blockedLeft = false;
-        } else {
-            blockedRight = false;
-        }
-        if (cbtemp.getMinY() + nextVelocity.getY() > targetBounds.getMaxY() || cbtemp.getMaxY() + nextVelocity.getY() < targetBounds.getMinY()) {
+        if (cbtemp.getMinX()  > targetBounds.getMaxX() || cbtemp.getMaxX() < targetBounds.getMinX()) {
             blockedUp = false;
             blockedDown = false;
         } else if (nextVelocity.getY() > 0) { // moving down
@@ -100,12 +92,20 @@ public class ObjectTraverseController extends AccelerationController {
         } else {
             blockedDown = false;
         }
+        if (cbtemp.getMinY() > targetBounds.getMaxY() || cbtemp.getMaxY() < targetBounds.getMinY()) {
+            blockedLeft = false;
+            blockedRight = false;
+        } else if (nextVelocity.getX() > 0) { // moving right
+            blockedLeft = false;
+        } else {
+            blockedRight = false;
+        }
         if (blockedUp || blockedDown) {
             // check left first
-            Point2D pointLeft1 = new Point2D(targetBounds.getMinX() - cbtemp.getWidth() - 1, cbtemp.getMinY());
+            Point2D pointLeft1 = new Point2D(targetBounds.getMinX() - cbtemp.getWidth(), cbtemp.getMinY());
             Point2D pointLeft2 = new Point2D(pointLeft1.getX(), destPoint.getY());
             // check right first
-            Point2D pointRight1 = new Point2D(targetBounds.getMaxX() + 1, cbtemp.getMinY());
+            Point2D pointRight1 = new Point2D(targetBounds.getMaxX(), cbtemp.getMinY());
             Point2D pointRight2 = new Point2D(pointRight1.getX(), destPoint.getY());
             double distLeft = destPoint.getX() - pointLeft2.getX() + Math.abs(pointLeft2.getY() - pointLeft1.getY()) + cbtemp.getMinX() - pointLeft1.getX();
             double distRight = pointRight2.getX() - destPoint.getX() + Math.abs(pointRight2.getY() - pointRight1.getY()) + pointRight1.getX() - cbtemp.getMinX();
@@ -119,10 +119,10 @@ public class ObjectTraverseController extends AccelerationController {
             }
         } else if (blockedLeft || blockedRight) {
             // check up first
-            Point2D pointUp1 = new Point2D(cbtemp.getMinX(), targetBounds.getMinY() - cbtemp.getHeight() - 1);
+            Point2D pointUp1 = new Point2D(cbtemp.getMinX(), targetBounds.getMinY() - cbtemp.getHeight());
             Point2D pointUp2 = new Point2D(destPoint.getX(), pointUp1.getY());
             // check down first
-            Point2D pointDown1 = new Point2D(cbtemp.getMinX(), targetBounds.getMaxY() + 1);
+            Point2D pointDown1 = new Point2D(cbtemp.getMinX(), targetBounds.getMaxY());
             Point2D pointDown2 = new Point2D(destPoint.getX(), pointDown1.getY());
             double distUp = destPoint.getY() - pointUp2.getY() + Math.abs(pointUp2.getX() - pointUp1.getX()) + cbtemp.getMinY() - pointUp1.getY();
             double distDown = pointDown2.getY() - destPoint.getY() + Math.abs(pointDown2.getX() - pointDown1.getX()) + pointDown1.getY() - cbtemp.getMinY();
@@ -143,26 +143,28 @@ public class ObjectTraverseController extends AccelerationController {
     public boolean process(Map<Entity, Boolean> changedEntities) {
         Point2D newPosition = controlledObject.getPosition();
         boolean nextPoint = false;
-        if (newPosition.getX() - lastPosition.getX() > 0) {
-            if (newPosition.getX() - path.get(0).getX() >= 0)
-                nextPoint = true;
-        } else {
-            if (newPosition.getX() - path.get(0).getX() <= 0)
-                nextPoint = true;
+        Point2D vNew = newPosition.subtract(path.get(0));
+        Point2D vOld = lastPosition.subtract(path.get(0));
+        if (vNew.magnitude() < 0.25) {
+            nextPoint = true;
         }
-        if (newPosition.getY() - lastPosition.getY() > 0) {
-            if (newPosition.getY() - path.get(0).getY() >= 0)
-                nextPoint = true;
-        } else {
-            if (newPosition.getY() - path.get(0).getY() <= 0)
-                nextPoint = true;
+        double cos = vNew.dotProduct(vOld) / vNew.magnitude() / vOld.magnitude();
+        if (cos > 1)
+            cos = 1;
+        if (cos < -1)
+            cos = -1;
+        if (Math.acos(cos) > Math.PI / 2.) {
+            nextPoint = true;
         }
         if (nextPoint)
             path.remove();
         if (path.isEmpty()) {
+            double addWidth = controlledObject.getHitbox().getStrokeWidth() / 2.;
+            controlledObject.setPosition(destPoint.add(addWidth, addWidth));
+            controlledObject.setVelocity(nextVelocity);
             controlledObject.removeController(this);
             controlledObject.addController(next);
-            return next.process(changedEntities);
+            return true;
         }
         lastPosition = newPosition;
         controlledObject.setVelocity(path.get(0).subtract(lastPosition).normalize().multiply(nextVelocity.magnitude()));
