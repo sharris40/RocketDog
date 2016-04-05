@@ -18,6 +18,8 @@ public abstract class TangibleEntity implements Entity{
     private Point2D position;
     private Point2D acceleration;
     private Point2D velocity;
+    private double horzSpeed, vertSpeed;
+    private boolean moving = false;
     protected Point2D stuckVelocity;
     private Hitbox hitbox;
     private final Map<EntityClass, Integer> entityClasses = new HashMap<>();
@@ -164,6 +166,29 @@ public abstract class TangibleEntity implements Entity{
 
     public void setPosition(Point2D newPosition) {
         position = newPosition;
+    }
+
+    public void setHorzSpeed(double v) {
+        horzSpeed = v;
+    }
+    public void setMoving(boolean x) {
+        moving = x;
+    }
+
+    public boolean getMoving() {
+        return moving;
+    }
+
+    public double getHorzSpeed() {
+        return horzSpeed;
+    }
+
+    public double getVertSpeed() {
+        return vertSpeed;
+    }
+
+    public void setVertSpeed(double v) {
+        vertSpeed = v;
     }
 
     public Point2D getVelocity() {

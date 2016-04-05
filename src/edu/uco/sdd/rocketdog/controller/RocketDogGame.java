@@ -46,8 +46,8 @@ public class RocketDogGame extends Application {
          */
         levels = new String[]{
             //"Test",
-            "Splash",
-            "One",
+            //"Splash",
+            //"One",
             "Two"
         };
 

@@ -4,6 +4,7 @@ import edu.uco.sdd.rocketdog.commands.RocketDogController;
 import edu.uco.sdd.rocketdog.controller.RocketDogGame;
 import edu.uco.sdd.rocketdog.model.Animations.SpitzIdleAnimateStrategy;
 import edu.uco.sdd.rocketdog.view.Props;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -13,7 +14,7 @@ import javafx.scene.text.Text;
  *
  * @author Dubs
  */
-public class LevelTwo extends Scene implements ILevel {
+public class LevelTwo extends Level implements ILevel {
 
     final public static int LEVEL_WIDTH = 3000; // Stage is 1000x924
     final public static int LEVEL_HEIGHT = 924;
@@ -40,6 +41,7 @@ public class LevelTwo extends Scene implements ILevel {
 
         // Initialize ROcketdog
         rocketdog = new RocketDog();
+        //rocketdog.setPosition(new Point2D(150,300));
         rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
 
         // Initialize Viewport
@@ -72,7 +74,9 @@ public class LevelTwo extends Scene implements ILevel {
 
         // Set up key controller
         this.setOnKeyPressed((KeyEvent event) -> {
-            switch (event.getCode()) {
+            keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 3.0d + super.getRocketDog().getAgilityAttribute());
+
+            /*switch (event.getCode()) {
                 case LEFT:
                     gameController.moveLeftButton();
                     break;
@@ -88,7 +92,10 @@ public class LevelTwo extends Scene implements ILevel {
                 case SPACE:
                     gameController.shootButton();
                     break;
-            }
+            }*/
+        });
+        this.setOnKeyReleased((KeyEvent event) -> {
+          keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
     }
 
@@ -99,6 +106,19 @@ public class LevelTwo extends Scene implements ILevel {
 
     @Override
     public void levelUpdate() {
+        super.levelUpdate();
+        updateKeys();
         rocketdog.update();
+    }
+
+    @Override
+    public void updateKeys(){
+        this.setOnKeyPressed((KeyEvent event) -> {
+            keyMapping.getKeyMapping().handleKeyPressed(rocketDogController, this, event, 3.0d + super.getRocketDog().getAgilityAttribute());
+        });
+
+        this.setOnKeyReleased((KeyEvent event) -> {
+            keyMapping.getKeyMapping().handleKeyReleased(rocketDogController, this, event, 0.0d);
+        });
     }
 }
