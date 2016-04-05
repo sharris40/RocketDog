@@ -71,18 +71,21 @@ public class Obstruction extends TangibleEntity implements IAnimateStrategy {
         
         if (this.isColliding()) {
 
-                //set accel to 0,0
-                //set X and Y velocity in the opposite direction
-                //then update and set velocity to 0
-                //this prevents RD from moving through the obstruction
-                this.rd = (RocketDog)te;
-                this.rd.setHorzSpeed(0);
-                this.rd.setVertSpeed(0);
-                te.setAcceleration(new Point2D(0,0));
-                te.setVelocity(new Point2D(-te.getVelocity().getX(), -te.getVelocity().getY()));
-                te.update();
-                te.setVelocity(new Point2D(0, 0));
-            }
+            //set accel to 0,0
+            //set X and Y velocity in the opposite direction
+            //then update and set velocity to 0
+            //this prevents RD from moving through the obstruction
+            //this.rd = (RocketDog)te;
+            //this.rd.setHorzSpeed(0);
+            //this.rd.setVertSpeed(0);
+            //te.setAcceleration(new Point2D(0,0));
+            //te.setVelocity(new Point2D(-te.getVelocity().getX(), -te.getVelocity().getY()));
+            //te.update();
+            //te.setVelocity(new Point2D(0, 0));
+            te.setColliding(true);
+        } else {
+            te.setColliding(false);
+        }
     }
     
     public void setAnimation(IAnimateStrategy newAnimation) {

@@ -16,7 +16,12 @@ import javafx.scene.shape.Rectangle;
  * @author Doobifier
  */
 public class Hitbox extends Rectangle {
-    
+    private double offsetX;//these offset values allow us resize the box for a
+    private double offsetY;//more appropriate size instead of ooversized rectangle
+    private double offsetW;
+    private double offsetH;
+
+
     public Hitbox(double width, double height) {
         super(width, height);
         setFill(Color.TRANSPARENT);
@@ -28,4 +33,28 @@ public class Hitbox extends Rectangle {
         setTranslateX(positionX);
         setTranslateY(positionY);
     }
+
+    public void resize(TangibleEntity te){
+        this.setTranslateX(te.getSprite().getTranslateX() + offsetX);
+        this.setTranslateY(te.getSprite().getTranslateY() + offsetY);
+    }
+
+
+    public void setOffsetX(double offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public void setOffsetY(double offsetY) {
+        this.offsetY = offsetY;
+    }
+
+    public void setOffsetW(double offsetW) {
+        this.offsetW = offsetW;
+    }
+
+    public void setOffsetH(double offsetH) {
+        this.offsetH = offsetH;
+    }
+
+
 }
