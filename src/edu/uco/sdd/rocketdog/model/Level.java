@@ -408,7 +408,7 @@ public class Level extends Scene implements Observer, ILevel {
         return largeLaserCharge;
     }
 
-    /*public void updateKeys() {
+    public void updateKeys() {
         this.setOnKeyPressed((KeyEvent event) -> {
             keyMapping.getKeyMapping().handleKeyPressed(rocketDogController, this, event, 3.0d + rocketDog.getAgilityAttribute());
         });
@@ -416,12 +416,12 @@ public class Level extends Scene implements Observer, ILevel {
         this.setOnKeyReleased((KeyEvent event) -> {
             keyMapping.getKeyMapping().handleKeyReleased(rocketDogController, this, event, 0.0d);
         });
-    }*/
+    }
 
     @Override
     public void levelUpdate() {
         //Keyboard Handling
-        //updateKeys();
+        updateKeys();
         //update(1);
         //Update RocketDog
         rocketDog.update();

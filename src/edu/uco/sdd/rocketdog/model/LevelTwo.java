@@ -40,7 +40,8 @@ public class LevelTwo extends Level implements ILevel {
         viewportGroup = new Group();
 
         // Initialize ROcketdog
-        rocketdog = new RocketDog();
+        //rocketdog = new RocketDog();
+        rocketdog = getRocketDog();
         //rocketdog.setPosition(new Point2D(150,300));
         rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
 
@@ -74,7 +75,7 @@ public class LevelTwo extends Level implements ILevel {
 
         // Set up key controller
         this.setOnKeyPressed((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 3.0d + super.getRocketDog().getAgilityAttribute());
+            keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 0.0d + super.getRocketDog().getAgilityAttribute());
 
             /*switch (event.getCode()) {
                 case LEFT:
@@ -107,18 +108,6 @@ public class LevelTwo extends Level implements ILevel {
     @Override
     public void levelUpdate() {
         super.levelUpdate();
-        updateKeys();
-        rocketdog.update();
-    }
-
-    @Override
-    public void updateKeys(){
-        this.setOnKeyPressed((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyPressed(rocketDogController, this, event, 3.0d + super.getRocketDog().getAgilityAttribute());
-        });
-
-        this.setOnKeyReleased((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyReleased(rocketDogController, this, event, 0.0d);
-        });
+        //rocketdog.update();
     }
 }
