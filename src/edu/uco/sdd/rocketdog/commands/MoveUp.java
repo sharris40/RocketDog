@@ -15,9 +15,11 @@ public class MoveUp extends AbstractCommand {
     @Override
     public void execute() {
         // Don't go above level
-        if (tangibleEntity.getSprite().getTranslateY() - focalSpeed <=0 ) {
+        if (absoluteBounds(tangibleEntity.getSprite()).getMinY() < 0 )
             return;
-        }
+        /*if (tangibleEntity.getSprite().getTranslateY() - focalSpeed <=0 ) {
+            return;
+        }*/
         tangibleEntity.setVertSpeed(-focalSpeed);
         tangibleEntity.setVelocity(new Point2D(tangibleEntity.getVelocity().getX(), -focalSpeed));
         tangibleEntity.setMoving(true);
