@@ -46,7 +46,7 @@ public class LevelTwo extends Level {
         levelItems = getLevelItems();
 
         // Initialize Rocketdog
-        rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
+        //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
