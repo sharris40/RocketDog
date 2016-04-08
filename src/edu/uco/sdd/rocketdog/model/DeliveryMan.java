@@ -42,18 +42,25 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
 
         this.setMultiHibox(true);
         hitboxes = new ArrayList();
-        Hitbox hitbox = new Hitbox(this.getPosition().getX(), this.getPosition().getY());
-        hitbox.setWidth(400);
+        Hitbox hitbox = new Hitbox(this.getSprite().getTranslateX(), this.getSprite().getTranslateX());
+        hitbox.setWidth(350);
         hitbox.setHeight(100);
         hitbox.setOffsetX(10);
         hitbox.setOffsetY(250);
         hitboxes.add(hitbox);
-        Hitbox nhitbox = new Hitbox(this.getPosition().getX(), this.getPosition().getY());
+        Hitbox nhitbox = new Hitbox(this.getSprite().getTranslateX(), this.getSprite().getTranslateX());
         nhitbox.setWidth(100);
-        nhitbox.setHeight(300);
+        nhitbox.setHeight(250);
         nhitbox.setOffsetX(250);
         nhitbox.setOffsetY(10);
         hitboxes.add(nhitbox);
+        setHitboxes(hitboxes);
+        Hitbox nnhitbox = new Hitbox(this.getSprite().getTranslateX(), this.getSprite().getTranslateX());
+        nnhitbox.setWidth(125);
+        nnhitbox.setHeight(125);
+        nnhitbox.setOffsetX(125);
+        nnhitbox.setOffsetY(125);
+        hitboxes.add(nnhitbox);
         setHitboxes(hitboxes);
 
         entityClass = new EntityClass("Enemy");
@@ -102,14 +109,14 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         getSprite().setLayoutX(getPosition().getX());
         getSprite().setLayoutY(getPosition().getY());
 
-        getHitbox().setLayoutX(getPosition().getX());
-        getHitbox().setLayoutY(getPosition().getY());
+        //getHitbox().setLayoutX(getPosition().getX());
+        //getHitbox().setLayoutY(getPosition().getY());
 
         getSprite().setViewport(animating.getCurrentView());
 
         hitboxes.forEach((hitbox) -> {
-            hitbox.setTranslateX(getSprite().getTranslateX());
-            hitbox.setTranslateY(getSprite().getTranslateY());
+            hitbox.setLayoutX(this.getSprite().getLayoutX());
+            hitbox.setLayoutY(this.getSprite().getLayoutY());
             hitbox.resize(this);
         });
         
