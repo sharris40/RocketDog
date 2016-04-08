@@ -35,6 +35,10 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         setPosition(new Point2D(x,y));
         setSprite(new ImageView(animating.getImage()));
         getSprite().setViewport(animating.getCurrentView());
+        getSprite().setLayoutX(x);
+        getSprite().setLayoutY(y);
+        getHitbox().setLayoutX(x);
+        getHitbox().setLayoutY(x);
 
         this.setMultiHibox(true);
         hitboxes = new ArrayList();
@@ -95,11 +99,11 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         } else {
             getSprite().setScaleX(1);
         }
-        getSprite().setTranslateX(getPosition().getX());
-        getSprite().setTranslateY(getPosition().getY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
 
-        getHitbox().setTranslateX(getPosition().getX());
-        getHitbox().setTranslateY(getPosition().getY());
+        getHitbox().setLayoutX(getPosition().getX());
+        getHitbox().setLayoutY(getPosition().getY());
 
         getSprite().setViewport(animating.getCurrentView());
 
