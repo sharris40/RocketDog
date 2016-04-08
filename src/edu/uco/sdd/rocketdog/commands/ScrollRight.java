@@ -32,7 +32,7 @@ class ScrollRight extends AbstractCommand {
             System.out.println("here");
             topLevelBackground.setTranslateX(-levelWidth);
         } else {
-            topLevelBackground.setTranslateX(translateX - focalSpeed);
+            topLevelBackground.setTranslateX(translateX - focalSpeed - 15);
         }
         
     }

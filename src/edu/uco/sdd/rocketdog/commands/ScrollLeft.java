@@ -14,7 +14,7 @@ class ScrollLeft extends AbstractCommand {
 
     @Override
     public void execute() {
-        topLevelBackground.setTranslateX(topLevelBackground.getTranslateX() + focalSpeed);
+        topLevelBackground.setTranslateX(topLevelBackground.getTranslateX() + focalSpeed + 15);
     }
 
 }

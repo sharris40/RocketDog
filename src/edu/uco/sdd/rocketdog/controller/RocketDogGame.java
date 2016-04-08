@@ -22,6 +22,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.scenicview.ScenicView;
 
 public class RocketDogGame extends Application {
 
@@ -67,7 +68,7 @@ public class RocketDogGame extends Application {
         primaryStage.setMaxWidth(GAME_SCREEN_WIDTH);
         primaryStage.setMaxHeight(GAME_SCREEN_HEIGHT);
         primaryStage.setScene(currentLevel);
-        //ScenicView.show(currentLevel);
+        ScenicView.show(currentLevel);
         primaryStage.show();
         primaryStage.setOnCloseRequest((WindowEvent t) -> {
             Platform.exit();
