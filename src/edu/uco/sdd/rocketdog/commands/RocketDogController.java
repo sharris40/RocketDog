@@ -74,10 +74,14 @@ public class RocketDogController {
     public void moveRightButton() {
         Node sprite = tangibleEntity.getSprite();
         double maxX = sprite.localToScene(sprite.getBoundsInLocal()).getMaxX();
-        if (topLevelBackgroundGroup.getTranslateX() - RocketDogGame.GAME_SCREEN_WIDTH < -levelWidth) {
-            return;
-        }
-        if (maxX + focalSpeed > viewportMaxX) {
+        // Do not scroll right past end of level
+        if (topLevelBackgroundGroup.getTranslateX() - RocketDogGame.GAME_SCREEN_WIDTH - focalSpeed < -levelWidth) {
+            // Allow movement to the right if at the end of the level
+            // but not past the end of the viewport
+            if (maxX < RocketDogGame.GAME_SCREEN_WIDTH) {
+                moveRight.execute();
+            }
+        } else if (maxX + focalSpeed > viewportMaxX) {
             scrollRight.execute();
         } else {
             moveRight.execute();
