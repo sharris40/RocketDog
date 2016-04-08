@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 /**
@@ -25,7 +26,7 @@ public class LevelTwo extends Level {
     final public static int VIEWPORT_MIN_X = 0;
 
     private Group backgroundGroup;
-    private Group viewportGroup;
+    //private Group viewportGroup;
     private Group levelItems;
     private Text viewportCoordinates;
     private Boolean isDone;
@@ -75,6 +76,10 @@ public class LevelTwo extends Level {
         backgroundGroup.getChildren().add(Props.house(0, LEVEL_HEIGHT - 300));
         backgroundGroup.getChildren().add(Props.house(LEVEL_WIDTH - 300, LEVEL_HEIGHT - 300));
         backgroundGroup.getChildren().add(levelItems);
+
+        //Add lasers to the viewport
+        addLaserWeapon();
+        addLargeLaserWeapon();
 
         //Add Level Items - Aid , enemies, obstructions etc
         //Add AidItems
@@ -194,4 +199,27 @@ public class LevelTwo extends Level {
         }
     }
 
+    public void addLaserWeapon(){
+        for (int i = 0; i < 3; i++) {
+            weapon.add(new LaserAttack());
+            getLaserWeapon(i).setPosition(new Point2D(0, -150));
+            getLaserWeapon(i).getHitbox().setWidth(44);
+            getLaserWeapon(i).getHitbox().setHeight(44);
+            getLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
+            viewportGroup.getChildren().add(getLaserWeapon(i).getSprite());
+            viewportGroup.getChildren().add(getLaserWeapon(i).getHitbox());
+            }
+    }
+
+    public void addLargeLaserWeapon(){
+         for (int i = 0; i < 3; i++) {
+            largeWeapon.add(new LargeLaserAttack());
+            getLargeLaserWeapon(i).setPosition(new Point2D(0, -150));
+            getLargeLaserWeapon(i).getHitbox().setWidth(200);
+            getLargeLaserWeapon(i).getHitbox().setHeight(133);
+            getLargeLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
+            viewportGroup.getChildren().add(getLargeLaserWeapon(i).getSprite());
+            viewportGroup.getChildren().add(getLargeLaserWeapon(i).getHitbox());
+        }
+    }
 }

@@ -38,9 +38,13 @@ public class Level extends Scene implements Observer, ILevel {
     protected boolean isDone;
     private Text scoreText;
     private int largeLaserCharge;
-    final private ArrayList<LaserAttack> weapon;
+    final protected ArrayList<LaserAttack> weapon;
     //final private LaserWeapon weapon;
-    final private ArrayList<LargeLaserAttack> largeWeapon;
+    final protected ArrayList<LargeLaserAttack> largeWeapon;
+
+
+    protected Group viewportGroup;
+
 
     public Level(Group root, int width, int height) {
         this(root, new ImageView(), width, height);
@@ -76,7 +80,7 @@ public class Level extends Scene implements Observer, ILevel {
         //root.setAlignment(Pos.TOP_LEFT);
 
         //Hero information added to game
-        rocketDog.setPosition(new Point2D(300, 350));
+        rocketDog.setPosition(new Point2D(150, 350));
         rocketDog.addEntityClass(player, 1);
         rocketDog.getHitbox().setWidth(130);
         rocketDog.getHitbox().setHeight(130);
@@ -458,7 +462,7 @@ public class Level extends Scene implements Observer, ILevel {
         changed.put(rocketDog, true);
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
-            if (laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0) {
+           if (laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0) {
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
