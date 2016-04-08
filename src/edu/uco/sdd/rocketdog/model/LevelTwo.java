@@ -29,7 +29,6 @@ public class LevelTwo extends Level {
     private Group levelItems;
     private Text viewportCoordinates;
     private Boolean isDone;
-    private RocketDog rocketdog;
     private RocketDogController gameController;
     private SoundManager soundManager;
 
@@ -47,17 +46,17 @@ public class LevelTwo extends Level {
         levelItems = getLevelItems();
 
         // Initialize Rocketdog
-        rocketdog = new RocketDog();
+        //rocketdog = new RocketDog();
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
-        rocketdog = getRocketDog();
+        rocketDog = getRocketDog();
         //rocketdog.setPosition(new Point2D(150,300));
-        rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
+        rocketDog.setAnimation(new SpitzIdleAnimateStrategy());
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
-        rocketdog = getRocketDog();
-        rocketdog.getSprite().setTranslateY(rocketdog.getSprite().getTranslateY() + 500);
+        rocketDog = getRocketDog();
+        rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
 
         // Initialize sound
         soundManager = new SoundManager();
@@ -67,8 +66,8 @@ public class LevelTwo extends Level {
 //        soundManager.mp_am.setMute(true);
 
         // Initialize Viewport
-        viewportGroup.getChildren().add(rocketdog.getSprite());
-        viewportGroup.getChildren().add(rocketdog.getHitbox());
+        viewportGroup.getChildren().add(rocketDog.getSprite());
+        viewportGroup.getChildren().add(rocketDog.getHitbox());
         viewportGroup.getChildren().add(getViewportItems());
 
         // Initialize Background objects
@@ -96,8 +95,6 @@ public class LevelTwo extends Level {
         addEnemy(new DeliveryMan(2000, 400), 400, 400);
 
         //Surfaces
-
-
         // Add Viewport + Background to root
         root.getChildren().add(backgroundGroup);
         root.getChildren().add(viewportGroup);
@@ -110,7 +107,7 @@ public class LevelTwo extends Level {
 
         // All Commands go through gameController
         gameController = new RocketDogController(
-                rocketdog, backgroundGroup, viewportGroup,
+                rocketDog, backgroundGroup, viewportGroup,
                 FOCAL_SPEED, VIEWPORT_MIN_X, VIEWPORT_MAX_X, LEVEL_WIDTH, LEVEL_HEIGHT
         );
 
@@ -119,28 +116,28 @@ public class LevelTwo extends Level {
             super.keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 0.0d + super.getRocketDog().getAgilityAttribute());
 
             /*switch (event.getCode()) {
-                case LEFT:
-                    gameController.moveLeftButton();
-                    break;
-                case RIGHT:
-                    gameController.moveRightButton();
-                    break;
-                case UP:
-                    gameController.moveUpButton();
-                    break;
-                case DOWN:
-                    gameController.moveDownButton();
-                    break;
-                case SPACE:
-                    gameController.shootButton(backgroundGroup);
-                    break;
-                case H:
-                    setVisibleHitBoxes(true);
-            }
-            }*/
+             case LEFT:
+             gameController.moveLeftButton();
+             break;
+             case RIGHT:
+             gameController.moveRightButton();
+             break;
+             case UP:
+             gameController.moveUpButton();
+             break;
+             case DOWN:
+             gameController.moveDownButton();
+             break;
+             case SPACE:
+             gameController.shootButton(backgroundGroup);
+             break;
+             case H:
+             setVisibleHitBoxes(true);
+             }
+             }*/
         });
         this.setOnKeyReleased((KeyEvent event) -> {
-          super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
+            super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
     }
 
@@ -157,24 +154,41 @@ public class LevelTwo extends Level {
         return absoluteBounds(x).intersects(absoluteBounds(y));
     }
 
+    public void updateKeys() {
+        //this.setOnKeyPressed((KeyEvent event) -> {
+        //    keyMapping.getKeyMapping().handleKeyPressed(this, event, 3.0d + rocketDog.getAgilityAttribute());
+        //});
+
+        //this.setOnKeyReleased((KeyEvent event) -> {
+        //    keyMapping.getKeyMapping().handleKeyReleased(this, event, 0.0d);
+        //});
+        this.setOnKeyPressed((KeyEvent event) -> {
+            keyMapping.getKeyMapping().handleKeyPressed(rocketDogController, this, event, 3.0d + rocketDog.getAgilityAttribute());
+        });
+
+        this.setOnKeyReleased((KeyEvent event) -> {
+            keyMapping.getKeyMapping().handleKeyReleased(rocketDogController, this, event, 0.0d);
+        });
+    }
+
     @Override
     public void levelUpdate() {
         super.levelUpdate();
-        rocketdog.update();
-        for (Node x: backgroundGroup.getChildren()) {
+        rocketDog.update();
+        for (Node x : backgroundGroup.getChildren()) {
             if (x instanceof Bullet) {
-                x.setTranslateX(x.getTranslateX()+5);
+                x.setTranslateX(x.getTranslateX() + 5);
                 Bullet b = (Bullet) x;
                 b.update();
-                if (levelIntersect(b,badguy)) {
-                    badguy.setTranslateY(badguy.getTranslateY()-5);
+                if (levelIntersect(b, badguy)) {
+                    badguy.setTranslateY(badguy.getTranslateY() - 5);
 
                 }
             }
         }
 
-        if (levelIntersect(rocketdog.getSprite(),badguy)) {
-            badguy.setTranslateX(badguy.getTranslateX()+10);
+        if (levelIntersect(rocketDog.getSprite(), badguy)) {
+            badguy.setTranslateX(badguy.getTranslateX() + 10);
         }
     }
 

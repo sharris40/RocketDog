@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
 
 public class Level extends Scene implements Observer, ILevel {
     public SoundManager s;
-    private RocketDog rocketDog;
+    protected RocketDog rocketDog;
     protected RocketDogController rocketDogController; //RocketDog's controller
     final private EntityClass player;
     private ArrayList<Modification> entities;
