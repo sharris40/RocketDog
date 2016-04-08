@@ -8,6 +8,8 @@ import java.util.Map;
 import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.Node;
+import javafx.geometry.Bounds;
 
 public abstract class TangibleEntity implements Entity{
 
@@ -20,6 +22,8 @@ public abstract class TangibleEntity implements Entity{
     private Point2D velocity;
     protected Point2D stuckVelocity;
     private Hitbox hitbox;
+    private ArrayList<Hitbox> Hitboxes;
+    private boolean multiHibox = false;
     private final Map<EntityClass, Integer> entityClasses = new HashMap<>();
     private ImageView sprite;
     private Level level;
@@ -234,7 +238,8 @@ public abstract class TangibleEntity implements Entity{
     }
 
     public void processCollision(TangibleEntity otherEntity) {
-        if (getHitbox().getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent())) {
+
+        if (levelIntersect(getHitbox(),otherEntity.getHitbox())){
             otherEntity.getHitbox().setStroke(Color.RED);
             getHitbox().setStroke(Color.RED);
             colliding = true;
@@ -244,6 +249,15 @@ public abstract class TangibleEntity implements Entity{
             colliding = false;
         }
     }
+
+    public Bounds absoluteBounds(Node node){
+        return node.localToScene(node.getBoundsInLocal());
+    }
+
+    public boolean levelIntersect(Node x, Node y){
+        return absoluteBounds(x).intersects(absoluteBounds(y));
+    }
+
 
     public boolean isColliding() {
         return colliding;
@@ -274,6 +288,26 @@ public abstract class TangibleEntity implements Entity{
         this.observers.stream().forEach((observer) -> {
             observer.update(getCurrentHealth());
         });
+    }
+
+    public void setColliding(boolean colliding) {
+        this.colliding = colliding;
+    }
+
+    public boolean isMultiHibox() {
+        return multiHibox;
+    }
+
+    public void setMultiHibox(boolean multiHibox) {
+        this.multiHibox = multiHibox;
+    }
+
+    public ArrayList<Hitbox> getHitboxes() {
+        return Hitboxes;
+    }
+
+    public void setHitboxes(ArrayList<Hitbox> Hitboxes) {
+        this.Hitboxes = Hitboxes;
     }
 
     public abstract void update();

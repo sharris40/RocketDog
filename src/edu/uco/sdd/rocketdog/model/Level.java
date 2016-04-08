@@ -15,12 +15,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.Node;
 import java.util.Map;
 
 
 public class Level extends Scene implements Observer, ILevel {
     public SoundManager s;
-    final private RocketDog rocketDog;
+    private RocketDog rocketDog;
     final private EntityClass player;
     private ArrayList<Modification> entities;
     private ArrayList<Enemy> enemies;
@@ -32,6 +33,8 @@ public class Level extends Scene implements Observer, ILevel {
     private ArrayList<Surface> surfaces;
     private boolean visibleHitBoxes;
     private Group root;
+    private Group levelItems;
+    private Group viewportItems;
     private KeyMappingContext keyMapping;
     protected boolean isDone;
     private Text scoreText;
@@ -59,7 +62,8 @@ public class Level extends Scene implements Observer, ILevel {
         AidItems = new ArrayList<>();
         ActiveAidItems = new ArrayList<>();
         Hazards = new ArrayList<>();
-
+        levelItems = new Group();
+        viewportItems = new Group();
         Obstructions = new ArrayList<>();
         projectiles = new ArrayList<>();
         weapon = new ArrayList();
@@ -80,10 +84,10 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.setCurrentHealth(10000);
 
         //Invisible obstruction on screen border
-        addObstruction(new Obstruction(new Point2D(0,0)),width, 1);
-        addObstruction(new Obstruction(new Point2D(0,0)),1, height);
-        addObstruction(new Obstruction(new Point2D(0,height)),width, 1);
-        addObstruction(new Obstruction(new Point2D(width,0)),1, height);
+        //addObstruction(new Obstruction(new Point2D(0,0)),width, 1);
+        //addObstruction(new Obstruction(new Point2D(0,0)),1, height);
+        //addObstruction(new Obstruction(new Point2D(0,height)),width, 1);
+        //addObstruction(new Obstruction(new Point2D(width,0)),1, height);
 
         //Laser Weapon information added to game
         for (int i = 0; i < 3; i++) {
@@ -111,8 +115,8 @@ public class Level extends Scene implements Observer, ILevel {
             root.getChildren().add(getLargeLaserWeapon(i).getHitbox());
         }
 
-        root.getChildren().add(rocketDog.getHitbox());
-        root.getChildren().add(scoreText);
+        //levelItems.getChildren().add(rocketDog.getHitbox());
+        viewportItems.getChildren().add(scoreText);
 
         scoreText.setText("Score : " + rocketDog.getScore() + "                 Health: " + rocketDog.getCurrentHealth());
         scoreText.setFont(new Font(20));
@@ -163,8 +167,14 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Add enemy information to level
         enemies.add(enemy);
-        this.root.getChildren().add(enemy.getSprite());
-        this.root.getChildren().add(enemy.getHitbox());
+        this.levelItems.getChildren().add(enemy.getSprite());
+        if(!enemy.isMultiHibox()){
+            this.levelItems.getChildren().add(enemy.getHitbox());
+        } else if (enemy.isMultiHibox()){
+            enemy.getHitboxes().stream().forEach((hitbox) -> {
+                this.levelItems.getChildren().add(hitbox);
+            });
+        }
     }
 
     public void removeEnemy(Enemy enemy) {
@@ -173,11 +183,11 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-        root.getChildren().remove(enemy.getSprite());
+        levelItems.getChildren().remove(enemy.getSprite());
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-        root.getChildren().remove(enemy.getHitbox());
+        levelItems.getChildren().remove(enemy.getHitbox());
     }
 
     public void addAidItem(AidItem aidItem, double width, double height) {
@@ -188,8 +198,8 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Add powerup information to level
         AidItems.add(aidItem);
-        root.getChildren().add(aidItem.getSprite());
-        root.getChildren().add(aidItem.getHitbox());
+        levelItems.getChildren().add(aidItem.getSprite());
+        levelItems.getChildren().add(aidItem.getHitbox());
     }
 
     public void removeAidItem(AidItem aidItem) {
@@ -198,11 +208,11 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the item in its children
         //before ting to remove
-        root.getChildren().remove(aidItem.getSprite());
+        levelItems.getChildren().remove(aidItem.getSprite());
 
         //Make sure the root has the item in its children
         //before ting to remove
-        root.getChildren().remove(aidItem.getHitbox());
+        levelItems.getChildren().remove(aidItem.getHitbox());
     }
 
     public void addActiveAidItem(ActiveAidItem activeAidItem, double width, double height) {
@@ -214,8 +224,8 @@ public class Level extends Scene implements Observer, ILevel {
         activeAidItem.setCurrentHealth(3);
         //Add active powerup information to level
         ActiveAidItems.add(activeAidItem);
-        root.getChildren().add(activeAidItem.getSprite());
-        root.getChildren().add(activeAidItem.getHitbox());
+        viewportItems.getChildren().add(activeAidItem.getSprite());
+        viewportItems.getChildren().add(activeAidItem.getHitbox());
     }
 
     public void removeActiveAidItem(ActiveAidItem activeAidItem) {
@@ -224,14 +234,14 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(activeAidItem.getSprite()) > -1) {
-            root.getChildren().remove(activeAidItem.getSprite());
+        if (viewportItems.getChildren().indexOf(activeAidItem.getSprite()) > -1) {
+            viewportItems.getChildren().remove(activeAidItem.getSprite());
         }
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(activeAidItem.getHitbox()) > -1) {
-            root.getChildren().remove(activeAidItem.getHitbox());
+        if (viewportItems.getChildren().indexOf(activeAidItem.getHitbox()) > -1) {
+            viewportItems.getChildren().remove(activeAidItem.getHitbox());
         }
     }
 
@@ -242,8 +252,8 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Add powerup information to level
         Hazards.add(hazard);
-        root.getChildren().add(hazard.getSprite());
-        root.getChildren().add(hazard.getHitbox());
+        levelItems.getChildren().add(hazard.getSprite());
+        levelItems.getChildren().add(hazard.getHitbox());
     }
 
     public void removeHazard(Hazard hazard) {
@@ -255,27 +265,27 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(hazard.getSprite()) > -1) {
-            root.getChildren().remove(hazard.getSprite());
+        if (levelItems.getChildren().indexOf(hazard.getSprite()) > -1) {
+            levelItems.getChildren().remove(hazard.getSprite());
         }
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(hazard.getHitbox()) > -1) {
-            root.getChildren().remove(hazard.getHitbox());
+        if (levelItems.getChildren().indexOf(hazard.getHitbox()) > -1) {
+            levelItems.getChildren().remove(hazard.getHitbox());
         }
     }
 
     public void addSurface(Surface surface) {
         surfaces.add(surface);
-        root.getChildren().add(surface.getSprite());
-        root.getChildren().add(surface.getHitbox());
+        levelItems.getChildren().add(surface.getSprite());
+        levelItems.getChildren().add(surface.getHitbox());
     }
 
     public void removeSurface(Surface surface) {
         surfaces.remove(surface);
-        root.getChildren().remove(surface.getSprite());
-        root.getChildren().remove(surface.getHitbox());
+        levelItems.getChildren().remove(surface.getSprite());
+        levelItems.getChildren().remove(surface.getHitbox());
     }
 
     public void addObstruction(Obstruction obstruction, double width, double height) {
@@ -287,10 +297,10 @@ public class Level extends Scene implements Observer, ILevel {
         //Add powerup information to level
         Obstructions.add(obstruction);
         if (obstruction.isVisible()){
-            root.getChildren().add(obstruction.getSprite());
+            levelItems.getChildren().add(obstruction.getSprite());
         }
         
-        root.getChildren().add(obstruction.getHitbox());
+        levelItems.getChildren().add(obstruction.getHitbox());
     }
 
     public void removeObstruction(Obstruction obstruction) {
@@ -302,14 +312,14 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(obstruction.getSprite()) > -1) {
-            root.getChildren().remove(obstruction.getSprite());
+        if (levelItems.getChildren().indexOf(obstruction.getSprite()) > -1) {
+            levelItems.getChildren().remove(obstruction.getSprite());
         }
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (root.getChildren().indexOf(obstruction.getHitbox()) > -1) {
-            root.getChildren().remove(obstruction.getHitbox());
+        if (levelItems.getChildren().indexOf(obstruction.getHitbox()) > -1) {
+            levelItems.getChildren().remove(obstruction.getHitbox());
         }
     }
 
@@ -320,8 +330,8 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Add enemy information to level
         projectiles.add(p);
-        root.getChildren().add(p.getSprite());
-        root.getChildren().add(p.getHitbox());
+        levelItems.getChildren().add(p.getSprite());
+        levelItems.getChildren().add(p.getHitbox());
     }
 
     public void removeProjectile(Projectile p) {
@@ -333,14 +343,14 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-        if (root.getChildren().indexOf(p.getSprite()) > -1) {
-            root.getChildren().remove(p.getSprite());
+        if (levelItems.getChildren().indexOf(p.getSprite()) > -1) {
+            levelItems.getChildren().remove(p.getSprite());
         }
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-        if (root.getChildren().indexOf(p.getHitbox()) > -1) {
-            root.getChildren().remove(p.getHitbox());
+        if (levelItems.getChildren().indexOf(p.getHitbox()) > -1) {
+            levelItems.getChildren().remove(p.getHitbox());
         }
     }
 
@@ -405,22 +415,22 @@ public class Level extends Scene implements Observer, ILevel {
     }
 
     public void updateKeys() {
-        this.setOnKeyPressed((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyPressed(this, event, 3.0d + rocketDog.getAgilityAttribute());
-        });
+        //this.setOnKeyPressed((KeyEvent event) -> {
+        //    keyMapping.getKeyMapping().handleKeyPressed(this, event, 3.0d + rocketDog.getAgilityAttribute());
+        //});
 
-        this.setOnKeyReleased((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyReleased(this, event, 0.0d);
-        });
+        //this.setOnKeyReleased((KeyEvent event) -> {
+        //    keyMapping.getKeyMapping().handleKeyReleased(this, event, 0.0d);
+        //});
     }
 
     @Override
     public void levelUpdate() {
         //Keyboard Handling
-        updateKeys();
+        //updateKeys();
 
         //Update RocketDog
-        rocketDog.update();
+        //rocketDog.update();
         if (rocketDog.getPosition().getX() > 500 && rocketDog.getLuckAttribute() > 1 && Math.random() > 0.9991) {
             this.addAidItem(new HealthItem(new Point2D(100, 1)), 56, 56);
         }
@@ -500,6 +510,11 @@ public class Level extends Scene implements Observer, ILevel {
 
             //Set enemy hitbox visibility
             enemy.getHitbox().setVisible(visibleHitBoxes);
+            if (enemy.isMultiHibox()){
+                enemy.getHitboxes().stream().forEach((hitbox) -> {
+                    hitbox.setVisible(visibleHitBoxes);
+                });
+            }
 
             //Check for collision
             enemy.processCollision(rocketDog);
@@ -537,6 +552,7 @@ public class Level extends Scene implements Observer, ILevel {
                 aidItem.getHitbox().setVisible(visibleHitBoxes);
 
                 //Check for collision
+                //aidItem.processCollision(rocketDog);
                 aidItem.processCollision(rocketDog);
 
                 if (aidItem.isDead()) {   //aid item has been collected
@@ -639,7 +655,21 @@ public class Level extends Scene implements Observer, ILevel {
         isDone = value;
     }
 
+    public Group getLevelItems() {
+        return levelItems;
+    }
+
     public ArrayList<Obstruction> getObstructions() {
         return (ArrayList<Obstruction>)Obstructions.clone();
     }
+
+    public void setRocketDog(RocketDog rocketDog) {
+        this.rocketDog = rocketDog;
+    }
+
+    public Group getViewportItems() {
+        return viewportItems;
+    }
+
+
 }

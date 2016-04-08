@@ -3,6 +3,7 @@ package edu.uco.sdd.rocketdog.controller;
 import edu.uco.sdd.rocketdog.model.Attacker;
 import edu.uco.sdd.rocketdog.model.Entity;
 import edu.uco.sdd.rocketdog.model.EntityClass;
+import edu.uco.sdd.rocketdog.model.Obstruction;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -54,7 +55,7 @@ public class PatrolController extends AccelerationController {
       throw new IllegalArgumentException("Delay must not be negative.");
     this.attackDelay = attackDelay;
   }
-  
+
   public PatrolController(TangibleEntity entity) {
     super(entity);
   }
@@ -142,14 +143,14 @@ public class PatrolController extends AccelerationController {
         Point2D veltemp = controlledObject.getVelocity();
         Bounds controlledBounds = new BoundingBox(cbtemp.getMinX() + veltemp.getX(), cbtemp.getMinY() + veltemp.getY(), cbtemp.getWidth(), cbtemp.getHeight());
 
-        controlledObject.getLevel().getObstructions().stream().forEach(obstruction -> {
+        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
             if (controlledBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
-                double temp = end;
-                end = start;
-                start = temp;
-                controlledObject.setVelocity(controlledObject.getVelocity().multiply(-1));
+                controlledObject.removeController(this);
+                ObjectTraverseController newController = new ObjectTraverseController(controlledObject, obstruction, this, veltemp, new Point2D(0, 0));
+                controlledObject.addController(newController);
+                return newController.process(changedEntities);
             }
-        });
+        }
     }
     return true;
   }

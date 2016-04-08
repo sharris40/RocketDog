@@ -1,5 +1,7 @@
 package edu.uco.sdd.rocketdog.model;
 
+import edu.uco.sdd.rocketdog.model.Animations.AbstractSpitzAnimationStrategy;
+import edu.uco.sdd.rocketdog.model.Animations.IAnimateStrategy;
 import javafx.geometry.Rectangle2D;
 
 public class SpitzHurtAnimateStrategy extends AbstractSpitzAnimationStrategy implements IAnimateStrategy {

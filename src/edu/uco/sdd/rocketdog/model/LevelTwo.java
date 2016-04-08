@@ -3,11 +3,14 @@ package edu.uco.sdd.rocketdog.model;
 import edu.uco.sdd.rocketdog.commands.RocketDogController;
 import edu.uco.sdd.rocketdog.controller.RocketDogGame;
 import edu.uco.sdd.rocketdog.model.Animations.SpitzIdleAnimateStrategy;
+import edu.uco.sdd.rocketdog.view.LevelTwoLayout;
 import edu.uco.sdd.rocketdog.view.Props;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -21,8 +24,10 @@ public class LevelTwo extends Level {
     final public static int VIEWPORT_MAX_X = RocketDogGame.GAME_SCREEN_WIDTH / 2;
     final public static int VIEWPORT_MIN_X = 0;
 
-    private final Group backgroundGroup;
-    private final Group viewportGroup;
+    private Group backgroundGroup;
+    private Group viewportGroup;
+    private Group levelItems;
+    private Text viewportCoordinates;
     private Boolean isDone;
     private RocketDog rocketdog;
     private RocketDogController gameController;
@@ -38,10 +43,15 @@ public class LevelTwo extends Level {
         // Initialize Groups
         backgroundGroup = new Group();
         viewportGroup = new Group();
+        levelItems = getLevelItems();
 
         // Initialize Rocketdog
-        rocketdog = new RocketDog();
         rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
+        // Initialize ROcketdog
+        //rocketdog = new RocketDog();
+        //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
+        rocketdog = getRocketDog();
+        rocketdog.getSprite().setTranslateY(rocketdog.getSprite().getTranslateY() + 500);
 
         // Initialize sound
         soundManager.resetMediaPlayer(soundManager.getMp_bg(), "intense.mp3");
@@ -51,12 +61,35 @@ public class LevelTwo extends Level {
 
         // Initialize Viewport
         viewportGroup.getChildren().add(rocketdog.getSprite());
+        viewportGroup.getChildren().add(rocketdog.getHitbox());
+        viewportGroup.getChildren().add(getViewportItems());
 
         // Initialize Background objects
         backgroundGroup.getChildren().add(Props.sunAndSky());
         backgroundGroup.getChildren().add(Props.sod(0, 2000, LEVEL_HEIGHT));
         backgroundGroup.getChildren().add(Props.house(0, LEVEL_HEIGHT - 300));
         backgroundGroup.getChildren().add(Props.house(LEVEL_WIDTH - 300, LEVEL_HEIGHT - 300));
+        backgroundGroup.getChildren().add(levelItems);
+
+        //Add Level Items - Aid , enemies, obstructions etc
+        //Add AidItems
+        addAidItem(new HealthItem(new Point2D(1364, 700)), 56, 56);
+        addAidItem(new ShieldItem(new Point2D(810, 350)), 56, 56);
+
+        // Hazards
+        //Obstructions
+        LevelTwoLayout l = new LevelTwoLayout(this);
+        l.addLayout();
+
+        // Bad Guys
+        EntityClass enemy = new EntityClass("Enemy");
+        enemy.setRelationship(getPlayer(), EntityClass.Relationship.ENEMY);
+        addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(1350).setY(476).setStart(1244).setEnd(1500).setRange(300).setEntityClass(enemy).setLevel(this).build(), 64, 64);
+        addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(1692).setY(224).setStart(50).setEnd(650).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
+        addEnemy(new DeliveryMan(2000, 400), 400, 400);
+
+        //Surfaces
+
 
         // Add Viewport + Background to root
         root.getChildren().add(backgroundGroup);
@@ -92,6 +125,8 @@ public class LevelTwo extends Level {
                 case SPACE:
                     gameController.shootButton(backgroundGroup);
                     break;
+                case H:
+                    setVisibleHitBoxes(true);
             }
         });
     }
@@ -111,6 +146,7 @@ public class LevelTwo extends Level {
 
     @Override
     public void levelUpdate() {
+        super.levelUpdate();
         rocketdog.update();
         for (Node x: backgroundGroup.getChildren()) {
             if (x instanceof Bullet) {
@@ -128,4 +164,5 @@ public class LevelTwo extends Level {
             badguy.setTranslateX(badguy.getTranslateX()+10);
         }
     }
+
 }
