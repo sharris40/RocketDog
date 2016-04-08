@@ -75,7 +75,7 @@ public class LevelTwo extends Level implements ILevel {
 
         // Set up key controller
         this.setOnKeyPressed((KeyEvent event) -> {
-            keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 0.0d + super.getRocketDog().getAgilityAttribute());
+            super.keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 0.0d + super.getRocketDog().getAgilityAttribute());
 
             /*switch (event.getCode()) {
                 case LEFT:
@@ -96,7 +96,7 @@ public class LevelTwo extends Level implements ILevel {
             }*/
         });
         this.setOnKeyReleased((KeyEvent event) -> {
-          keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
+          super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
     }
 
