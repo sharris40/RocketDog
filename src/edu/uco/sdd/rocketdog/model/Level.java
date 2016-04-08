@@ -76,11 +76,11 @@ public class Level extends Scene implements Observer, ILevel {
         //root.setAlignment(Pos.TOP_LEFT);
 
         //Hero information added to game
-        rocketDog.setPosition(new Point2D(150, 350));
+        rocketDog.setPosition(new Point2D(300, 350));
         rocketDog.addEntityClass(player, 1);
         rocketDog.getHitbox().setWidth(130);
         rocketDog.getHitbox().setHeight(130);
-        rocketDog.setLevel(this);
+        //rocketDog.setLevel(this);
         rocketDog.setCurrentHealth(10000);
 
         // Add Sound?
@@ -427,13 +427,13 @@ public class Level extends Scene implements Observer, ILevel {
         //this.setOnKeyReleased((KeyEvent event) -> {
         //    keyMapping.getKeyMapping().handleKeyReleased(this, event, 0.0d);
         //});
-        this.setOnKeyPressed((KeyEvent event) -> {
+        /*this.setOnKeyPressed((KeyEvent event) -> {
             keyMapping.getKeyMapping().handleKeyPressed(rocketDogController, this, event, 3.0d + rocketDog.getAgilityAttribute());
         });
 
         this.setOnKeyReleased((KeyEvent event) -> {
             keyMapping.getKeyMapping().handleKeyReleased(rocketDogController, this, event, 0.0d);
-        });
+        });*/
     }
 
     @Override
@@ -441,7 +441,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Keyboard Handling
         //updateKeys();
 
-        updateKeys();
+        //updateKeys();
         //update(1);
         //Update RocketDog
         //rocketDog.update();

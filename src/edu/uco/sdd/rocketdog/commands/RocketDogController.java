@@ -77,7 +77,7 @@ public class RocketDogController {
             if (maxX < RocketDogGame.GAME_SCREEN_WIDTH) {
                 moveRight.execute();
             }
-        } else if (maxX + focalSpeed > viewportMaxX) {
+        } else if (maxX + focalSpeed > viewportMaxX/2) {
             scrollRight.execute();
         } else {
             moveRight.execute();

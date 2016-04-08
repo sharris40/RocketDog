@@ -43,8 +43,8 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         this.healthText.setFont(new Font(20));
         this.healthText.setStroke(Color.GREEN);
 
-        getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
-        getHitbox().setOffsetY(20);
+        //getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
+        //getHitbox().setOffsetY(20);
     }
 
     @Override
@@ -101,13 +101,15 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         /**
          * Moving the character is handled by the TangibleEntity class
          */
-//        getSprite().setLayoutX(getPosition().getX());
-//        getSprite().setTranslateY(getPosition().getY());
-//
-//        getHitbox().setLayoutX(getPosition().getX());
-//        getHitbox().setTranslateY(getPosition().getY());
-        getHitbox().setTranslateX(getSprite().getTranslateX());
-        getHitbox().setTranslateY(getSprite().getTranslateY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
+        //getSprite().setTranslateY(getPosition().getY());
+        //getSprite().setX(getPosition().getX());
+        getHitbox().setLayoutX(getPosition().getX());
+        getHitbox().setLayoutY(getPosition().getY());
+        //getHitbox().setTranslateY(getPosition().getY());
+        //getHitbox().setTranslateX(getSprite().getTranslateX());
+        //getHitbox().setTranslateY(getSprite().getTranslateY());
         getHitbox().setWidth(80);
         getHitbox().setHeight(100);
         getHitbox().resize(this);

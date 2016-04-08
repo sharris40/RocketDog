@@ -49,14 +49,13 @@ public class LevelTwo extends Level {
         //rocketdog = new RocketDog();
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
-        rocketDog = getRocketDog();
-        //rocketdog.setPosition(new Point2D(150,300));
-        rocketDog.setAnimation(new SpitzIdleAnimateStrategy());
+        //rocketDog = getRocketDog();
+        //rocketDog.setPosition(new Point2D(150,300));
+        //rocketDog.setAnimation(new SpitzIdleAnimateStrategy());
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
-        rocketDog = getRocketDog();
-        rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
+        //rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
 
         // Initialize sound
         soundManager = new SoundManager();
@@ -154,6 +153,7 @@ public class LevelTwo extends Level {
         return absoluteBounds(x).intersects(absoluteBounds(y));
     }
 
+    @Override
     public void updateKeys() {
         //this.setOnKeyPressed((KeyEvent event) -> {
         //    keyMapping.getKeyMapping().handleKeyPressed(this, event, 3.0d + rocketDog.getAgilityAttribute());
@@ -174,6 +174,8 @@ public class LevelTwo extends Level {
     @Override
     public void levelUpdate() {
         super.levelUpdate();
+        super.update(0);
+        updateKeys();
         rocketDog.update();
         for (Node x : backgroundGroup.getChildren()) {
             if (x instanceof Bullet) {
