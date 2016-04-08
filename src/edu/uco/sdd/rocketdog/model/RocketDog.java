@@ -22,9 +22,9 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
     private int luckAttribute;
     private int currentScore;
     public int count1 = 0, count2 = 0;
-    private boolean moving = false;
+    //private boolean moving = false;
 
-    private double horzSpeed, vertSpeed;
+    //private double horzSpeed, vertSpeed;
 
     public RocketDog() {
         super();
@@ -56,35 +56,35 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
             currentVelocity = getVelocity();
         }
 
-        if (moving || isMovementRestricted()) {
+        if (getMoving() || isMovementRestricted()) {
             setPosition(new Point2D(getPosition().getX() + currentVelocity.getX(), getPosition().getY() + currentVelocity.getY()));
         }
 
-        if (!moving && getHorzSpeed() > 0) {
-            setHorzSpeed(getHorzSpeed() - .5);
+        if (!getMoving() && getHorzSpeed() > 0) {
+            setHorzSpeed(getHorzSpeed() - .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getRightSpeed() > 0){
             //setRightSpeed(getRightSpeed()-.3);
             //setPosition(new Point2D(getPosition().getX() + getRightSpeed(), getPosition().getY()));
         }
 
-        if (!moving && getHorzSpeed() < 0) {
-            setHorzSpeed(getHorzSpeed() + .5);
+        if (!getMoving() && getHorzSpeed() < 0) {
+            setHorzSpeed(getHorzSpeed() + .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getLeftSpeed() < 0){
             //setLeftSpeed(getLeftSpeed()+.3);
             //setPosition(new Point2D(getPosition().getX() + getLeftSpeed(), getPosition().getY()));
         }
 
-        if (!moving && getVertSpeed() < 0) {
-            setVertSpeed(getVertSpeed() + .5);
+        if (!getMoving() && getVertSpeed() < 0) {
+            setVertSpeed(getVertSpeed() + .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getUpSpeed() < 0){
             //setUpSpeed(getUpSpeed() +.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getUpSpeed()));
         }
-        if (!moving && getVertSpeed() > 0) {
-            setVertSpeed(getVertSpeed() - .5);
+        if (!getMoving() && getVertSpeed() > 0) {
+            setVertSpeed(getVertSpeed() - .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getDownSpeed() > 0){
             //setDownSpeed(getDownSpeed() -.5);
@@ -204,7 +204,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         return this.healthText;
     }
 
-    public void setMoving(boolean x) {
+    /*public void setMoving(boolean x) {
         moving = x;
     }
 
@@ -220,12 +220,9 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         return vertSpeed;
     }
 
-    public void setHorzSpeed(double v) {
-        horzSpeed = v;
-    }
-
     public void setVertSpeed(double v) {
         vertSpeed = v;
+<<<<<<< HEAD
     }
 
     @Override
@@ -257,5 +254,47 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 
     @Override
     public void visit(Bullet b) {
+    }
+=======
+    }*/
+
+    @Override
+    public void visit(RocketDog rd) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(Enemy e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(TangibleEntity te) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(Obstruction obstruction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(AidItem ai) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(UglyDog ud) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void visit(Bullet b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void accept(IVisitor v) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -31,6 +31,7 @@ public class LevelTwo extends Level {
     private Boolean isDone;
     private RocketDog rocketdog;
     private RocketDogController gameController;
+    private SoundManager soundManager;
 
     UglyDog badguy;
 
@@ -47,6 +48,10 @@ public class LevelTwo extends Level {
 
         // Initialize Rocketdog
         rocketdog = new RocketDog();
+        // Initialize ROcketdog
+        //rocketdog = new RocketDog();
+        rocketdog = getRocketDog();
+        //rocketdog.setPosition(new Point2D(150,300));
         rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
@@ -55,10 +60,11 @@ public class LevelTwo extends Level {
         rocketdog.getSprite().setTranslateY(rocketdog.getSprite().getTranslateY() + 500);
 
         // Initialize sound
-        soundManager.resetMediaPlayer(soundManager.getMp_bg(), "intense.mp3");
-        soundManager.mp_bg.setVolume(0);
-        soundManager.mp_bg.setCycleCount(100);
-        soundManager.mp_am.setMute(true);
+        soundManager = new SoundManager();
+//        soundManager.resetMediaPlayer(soundManager.getMp_bg(), "intense.mp3");
+//        soundManager.mp_bg.setVolume(0);
+//        soundManager.mp_bg.setCycleCount(100);
+//        soundManager.mp_am.setMute(true);
 
         // Initialize Viewport
         viewportGroup.getChildren().add(rocketdog.getSprite());
@@ -110,7 +116,9 @@ public class LevelTwo extends Level {
 
         // Set up key controller
         this.setOnKeyPressed((KeyEvent event) -> {
-            switch (event.getCode()) {
+            super.keyMapping.getKeyMapping().handleKeyPressed(gameController, this, event, 0.0d + super.getRocketDog().getAgilityAttribute());
+
+            /*switch (event.getCode()) {
                 case LEFT:
                     gameController.moveLeftButton();
                     break;
@@ -129,6 +137,10 @@ public class LevelTwo extends Level {
                 case H:
                     setVisibleHitBoxes(true);
             }
+            }*/
+        });
+        this.setOnKeyReleased((KeyEvent event) -> {
+          super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
     }
 

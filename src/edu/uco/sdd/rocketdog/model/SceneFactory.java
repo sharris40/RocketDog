@@ -30,7 +30,7 @@ public class SceneFactory {
             case "Splash":
                 return new SplashLevel(new BorderPane(),soundManager);
             case "One":
-                return new LevelOne(new Group(), ldr.loadImage("/Level 2.png"), GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,soundManager);
+                return new LevelOne(new Group(), ldr.loadImage("/Level 2.png"), GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,soundManager);           
             case "Two":
                 return new LevelTwo(new Group(), LevelTwo.LEVEL_WIDTH, LevelTwo.LEVEL_HEIGHT,soundManager);
             case "Test":
