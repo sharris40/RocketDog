@@ -77,7 +77,7 @@ public class RocketDogController {
         if (topLevelBackgroundGroup.getTranslateX() - RocketDogGame.GAME_SCREEN_WIDTH < -levelWidth) {
             return;
         }
-        if (maxX + focalSpeed > viewportMaxX) {
+        if (maxX + focalSpeed > viewportMaxX/2) {
             scrollRight.execute();
         } else {
             moveRight.execute();
@@ -91,7 +91,7 @@ public class RocketDogController {
         if (topLevelBackgroundGroup.getTranslateX() + focalSpeed > 0 && minX < 10) {
             return;
         }
-        if (minX - focalSpeed < viewportMinX) {
+        if (minX - focalSpeed < viewportMinX+400) {
             scrollLeft.execute();
         } else {
             moveLeft.execute();
