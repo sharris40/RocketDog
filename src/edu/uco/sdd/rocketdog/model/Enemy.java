@@ -100,7 +100,7 @@ public class Enemy extends TangibleEntity implements Attacker {
         }
     }
 
-    private Enemy(Builder builder) {
+    public Enemy(Builder builder) {
         super();
         img = builder.img;
         setSprite(new ImageView(img));

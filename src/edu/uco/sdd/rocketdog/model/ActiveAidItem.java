@@ -41,10 +41,10 @@ public class ActiveAidItem extends TangibleEntity implements IAnimateStrategy, A
     
     public void update(){
         setPosition(new Point2D(te.getPosition().getX() - this.offset,te.getPosition().getY()));
-        getSprite().setTranslateX(getPosition().getX());
-        getSprite().setTranslateY(getPosition().getY());
-        getHitbox().setTranslateX(getPosition().getX());
-        getHitbox().setTranslateY(getPosition().getY());
+        getSprite().setTranslateX(te.getSprite().getTranslateX());
+        getSprite().setTranslateY(te.getSprite().getTranslateY());
+        getHitbox().setTranslateX(te.getSprite().getTranslateX());
+        getHitbox().setTranslateY(te.getSprite().getTranslateY());
         getSprite().setViewport(animating.getCurrentView());
         handle(); // Animations
         

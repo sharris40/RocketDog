@@ -15,7 +15,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 
     private IAnimateStrategy animating;
     private final Text healthText;
-    private static final double MAX_HEALTH = 10000;
+    private static final double MAX_HEALTH = 500;
     private int powerAttribute;
     private int agilityAttribute;
     private int defenseAttribute;
@@ -42,6 +42,9 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         this.healthText = new Text(0, 20, Double.toString(super.getCurrentHealth()));
         this.healthText.setFont(new Font(20));
         this.healthText.setStroke(Color.GREEN);
+
+        getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
+        getHitbox().setOffsetY(20);
     }
 
     @Override
@@ -103,6 +106,11 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 //
 //        getHitbox().setLayoutX(getPosition().getX());
 //        getHitbox().setTranslateY(getPosition().getY());
+        getHitbox().setTranslateX(getSprite().getTranslateX());
+        getHitbox().setTranslateY(getSprite().getTranslateY());
+        getHitbox().setWidth(80);
+        getHitbox().setHeight(100);
+        getHitbox().resize(this);
 
         getSprite().setViewport(animating.getCurrentView());
         handle(); // Animations
