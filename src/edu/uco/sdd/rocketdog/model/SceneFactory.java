@@ -30,21 +30,18 @@ public class SceneFactory {
             case "Splash":
                 return new SplashLevel(new BorderPane(),soundManager);
             case "One":
-                return new LevelOne(new Group(), ldr.loadImage("/Level 2.png"), GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,soundManager);           
+                return new LevelOne(new Group(), ldr.loadImage("/Level 2.png"), GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,soundManager);
             case "Two":
-                return new LevelTwo(new Group(), LevelTwo.LEVEL_WIDTH, LevelTwo.LEVEL_HEIGHT,soundManager);
-            case "Test":
-                return new LevelTest(new Group(), LevelTwo.LEVEL_WIDTH, LevelTwo.LEVEL_HEIGHT);
+                return new LevelTwo(new Group(), LevelTwo.LEVEL_WIDTH, LevelTwo.LEVEL_HEIGHT, soundManager);
             default: // Google Style Guide: default for switch is mandatory
                 throw new LevelNotFound(level + " is not valid for getLevel in LevelFactory.java");
         }
     }
-
-    private void loadMusic() {
-        soundManager = new SoundManager();
+    private void loadMusic(){
+        soundManager= new SoundManager();
         soundManager.setMp_bg(soundManager.createMediaPlayer("bgmusic.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_bg(), 0.1);
+        soundManager.playMediaPlayer(soundManager.getMp_bg(),0.1);
         soundManager.setMp_am(soundManager.createMediaPlayer("forest.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_am(), 0.2);
+        soundManager.playMediaPlayer(soundManager.getMp_am(),0.2);
     }
 }

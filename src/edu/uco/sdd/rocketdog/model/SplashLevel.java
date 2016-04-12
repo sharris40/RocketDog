@@ -64,8 +64,6 @@ public class SplashLevel extends Scene implements ILevel {
         super(root,1000,924);
         isDone = false;
         this.root = root;
-        soundManager.mp_bg.setVolume(0.02);
-        soundManager.mp_am.setMute(true);
         this.soundManager= soundManager;
         HBox hboxTop= addHBox();
         HBox hboxBottom=addHBox();
@@ -191,7 +189,7 @@ public class SplashLevel extends Scene implements ILevel {
         root.getChildren().add(vCheckBox);
         musicLabel = new Label("Music");
         ambianceVolumeLabel= new Label("Ambient");
-        musicSlider = new Slider(0.0, 0.4, 0.4);
+        musicSlider = new Slider(0.0, 1.0, 1.0);
         ambientSlider = new Slider(0.0, 1.0, 1.0);
     }
     public GridPane createOptionsGridPane(){
@@ -203,7 +201,7 @@ public class SplashLevel extends Scene implements ILevel {
 
         createOptionsButtons();
         createMusicControls();
-        musicSlider.setValue(0.2);
+        musicSlider.setValue(soundManager.mp_bg.getVolume());
         ambientSlider.setValue(soundManager.mp_am.getVolume());
         //column then rown
         GridPane.setConstraints(optionsDefaultButton, 0, 3);

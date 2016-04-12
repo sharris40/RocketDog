@@ -47,7 +47,7 @@ public class LevelOne extends Level {
         //addObstruction(new ObstructionBrickWall(new Point2D(700,300)),64,64);
         //addObstruction(new ObstructionBrickWall(new Point2D(700,236)),64,64);
         //addObstruction(new ObstructionBrickWall(new Point2D(700,172)),64,64);
-        addObstruction(new ObstructionBrickWall(new Point2D(600, 200)), 64, 64);
+        addObstruction(new ObstructionBrickWall(new Point2D(200, 624)), 64, 64);
         //addObstruction(new ObstructionBrickWall(new Point2D(500,624)),64,64);
 
         //Surfaces
@@ -57,11 +57,11 @@ public class LevelOne extends Level {
         // Bad Guys
         EntityClass enemy = new EntityClass("Enemy");
         enemy.setRelationship(getPlayer(), EntityClass.Relationship.ENEMY);
-        addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(600).setY(100).setStart(350).setEnd(450).setRange(300).setEntityClass(enemy).setLevel(this).build(), 64, 64);
+        addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(400).setY(700).setStart(350).setEnd(450).setRange(300).setEntityClass(enemy).setLevel(this).build(), 64, 64);
         addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(300).setY(650).setStart(50).setEnd(650).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
         //addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(400).setY(400).setEntityClass(enemy).setLevel(this).build(), 64, 64);
         //addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(300).setY(350).setEntityClass(enemy).setLevel(this).build(), 32, 32);
-        addEnemy(new DeliveryMan(600, 400), 400, 400);
+        addEnemy(new DeliveryMan(500, 400), 400, 400);
 
         //done
         finishLevel();
@@ -83,7 +83,7 @@ public class LevelOne extends Level {
     }
 
     public void positionScreen() {
-        RocketDog rd = this.getRocketDog(); 
+        RocketDog rd = this.getRocketDog();
         double width = RocketDogGame.GAME_SCREEN_WIDTH;
         double height = RocketDogGame.GAME_SCREEN_HEIGHT;
 

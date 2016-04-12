@@ -92,7 +92,7 @@ public class DefaultKeyMapping implements KeyMapping {
                 currentLevel.setVisibleHitBoxes(!currentLevel.getVisibleHitBoxes());
                 break;
             case P:
-                currentLevel.setDone(true);
+                currentLevel.addAidItem(new HealthItem(new Point2D(100, 100)), 56, 56);
                 break;
             case O:
                 //game.displayOptionsScreen();

@@ -7,6 +7,7 @@ import edu.uco.sdd.rocketdog.view.LevelTwoLayout;
 import edu.uco.sdd.rocketdog.view.Props;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -32,7 +33,7 @@ public class LevelTwo extends Level {
     private Boolean isDone;
     private RocketDogController gameController;
     private SoundManager soundManager;
-
+    private HighScores highscore;
     UglyDog badguy;
 
     public LevelTwo(Group root, int width, int height, SoundManager soundManager) {
@@ -57,7 +58,6 @@ public class LevelTwo extends Level {
         //rocketdog = new RocketDog();
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
         //rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
-
         // Initialize sound
         soundManager = new SoundManager();
 //        soundManager.resetMediaPlayer(soundManager.getMp_bg(), "intense.mp3");
@@ -107,13 +107,14 @@ public class LevelTwo extends Level {
         badguy.setTranslateX(500);
         badguy.setTranslateY(500);
 
-        backgroundGroup.getChildren().add(badguy);
-
+        //backgroundGroup.getChildren().add(badguy);
         // All Commands go through gameController
         gameController = new RocketDogController(
                 rocketDog, backgroundGroup, viewportGroup,
                 FOCAL_SPEED, VIEWPORT_MIN_X, VIEWPORT_MAX_X, LEVEL_WIDTH, LEVEL_HEIGHT
         );
+
+        update(getRocketDog().getCurrentHealth());
 
         // Set up key controller
         this.setOnKeyPressed((KeyEvent event) -> {
@@ -143,6 +144,15 @@ public class LevelTwo extends Level {
         this.setOnKeyReleased((KeyEvent event) -> {
             super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
+
+        HighScores hm = new HighScores();
+        //HighScoreDisplay hsd= new HighScoreDisplay();
+        highscore = new HighScores();
+        System.out.println("HIGHSCORE ADD CALLED");
+        highscore.addStackPaneScores(highscore.hb);
+        highscore.hb.setAlignment(Pos.CENTER);
+        highscore.hb.resize(400, 400);
+        root.getChildren().add(highscore.hb);
     }
 
     @Override
@@ -199,7 +209,7 @@ public class LevelTwo extends Level {
         }
     }
 
-    public void addLaserWeapon(){
+    public void addLaserWeapon() {
         for (int i = 0; i < 3; i++) {
             weapon.add(new LaserAttack());
             getLaserWeapon(i).setPosition(new Point2D(0, -150));
@@ -208,11 +218,11 @@ public class LevelTwo extends Level {
             getLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
             viewportGroup.getChildren().add(getLaserWeapon(i).getSprite());
             viewportGroup.getChildren().add(getLaserWeapon(i).getHitbox());
-            }
+        }
     }
 
-    public void addLargeLaserWeapon(){
-         for (int i = 0; i < 3; i++) {
+    public void addLargeLaserWeapon() {
+        for (int i = 0; i < 3; i++) {
             largeWeapon.add(new LargeLaserAttack());
             getLargeLaserWeapon(i).setPosition(new Point2D(0, -150));
             getLargeLaserWeapon(i).getHitbox().setWidth(200);

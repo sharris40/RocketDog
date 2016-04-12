@@ -32,6 +32,7 @@ public abstract class TangibleEntity implements Entity{
     private ArrayList<Modification> modifications;
     private final ArrayList<Observer> observers;
     private boolean movementRestricted;
+    private boolean isImmune;
     public TangibleEntity() {
         this(new Point2D(0, 0));
     }
@@ -42,6 +43,7 @@ public abstract class TangibleEntity implements Entity{
 
     public TangibleEntity(Point2D startPosition, double hitboxWidth, double hitboxHeight, int startHealth) {
         this.dead = false;
+        this.isImmune = false;
         this.colliding = false;
         this.movementRestricted = false;
         this.modifications = new ArrayList<>();
@@ -66,6 +68,13 @@ public abstract class TangibleEntity implements Entity{
 
     public boolean hasCollided(TangibleEntity otherEntity) {
         return getHitbox().getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
+    }
+    public void setImmunity(boolean value) {
+        isImmune = value;
+    }
+
+    public boolean isImmune() {
+        return isImmune;
     }
 
     @Override

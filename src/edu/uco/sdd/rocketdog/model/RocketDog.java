@@ -20,21 +20,23 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
     private int agilityAttribute;
     private int defenseAttribute;
     private int luckAttribute;
+    private int charismaAttribute;
     private int currentScore;
     public int count1 = 0, count2 = 0;
-    //private boolean moving = false;
+    private boolean moving = false;
 
-    //private double horzSpeed, vertSpeed;
+    private double horzSpeed, vertSpeed;
 
     public RocketDog() {
         super();
         currentScore = 0;
         setMaximumHealth(MAX_HEALTH);
         currentHealth = MAX_HEALTH;
-        powerAttribute = 0;
-        agilityAttribute = 1;
+        powerAttribute = 1;
+        agilityAttribute = 0;
         defenseAttribute = 1;
         luckAttribute = 1;
+        charismaAttribute = 1;
         animating = new SpitzIdleAnimateStrategy();
         setSprite(new ImageView(animating.getImage()));
         getSprite().setViewport(animating.getCurrentView());
@@ -43,8 +45,8 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         this.healthText.setFont(new Font(20));
         this.healthText.setStroke(Color.GREEN);
 
-        //getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
-        //getHitbox().setOffsetY(20);
+        getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
+        getHitbox().setOffsetY(20);
     }
 
     @Override
@@ -56,44 +58,42 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
             currentVelocity = getVelocity();
         }
 
-        if (getMoving() || isMovementRestricted()) {
+        if (moving || isMovementRestricted()) {
             setPosition(new Point2D(getPosition().getX() + currentVelocity.getX(), getPosition().getY() + currentVelocity.getY()));
         }
 
-        if (!getMoving() && getHorzSpeed() > 0) {
-            setHorzSpeed(getHorzSpeed() - .25);
+        if (!moving && getHorzSpeed() > 0) {
+            setHorzSpeed(getHorzSpeed() - .5);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getRightSpeed() > 0){
             //setRightSpeed(getRightSpeed()-.3);
             //setPosition(new Point2D(getPosition().getX() + getRightSpeed(), getPosition().getY()));
         }
 
-        if (!getMoving() && getHorzSpeed() < 0) {
-            setHorzSpeed(getHorzSpeed() + .25);
+        if (!moving && getHorzSpeed() < 0) {
+            setHorzSpeed(getHorzSpeed() + .5);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getLeftSpeed() < 0){
             //setLeftSpeed(getLeftSpeed()+.3);
             //setPosition(new Point2D(getPosition().getX() + getLeftSpeed(), getPosition().getY()));
         }
 
-        if (!getMoving() && getVertSpeed() < 0) {
-            setVertSpeed(getVertSpeed() + .25);
+        if (!moving && getVertSpeed() < 0) {
+            setVertSpeed(getVertSpeed() + .5);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getUpSpeed() < 0){
             //setUpSpeed(getUpSpeed() +.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getUpSpeed()));
         }
-        if (!getMoving() && getVertSpeed() > 0) {
-            setVertSpeed(getVertSpeed() - .25);
+        if (!moving && getVertSpeed() > 0) {
+            setVertSpeed(getVertSpeed() - .5);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getDownSpeed() > 0){
             //setDownSpeed(getDownSpeed() -.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getDownSpeed()));
         }
 
-
-        if(this.getCurrentHealth() <= 0 && !this.isDead())
-        {
+        if (this.getCurrentHealth() <= 0 && !this.isDead()) {
             this.setDead(true);
             setAnimation(new SpitzDeadAnimateStrategy());
         }
@@ -101,21 +101,30 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         /**
          * Moving the character is handled by the TangibleEntity class
          */
-        getSprite().setLayoutX(getPosition().getX());
-        getSprite().setLayoutY(getPosition().getY());
-        //getSprite().setTranslateY(getPosition().getY());
-        //getSprite().setX(getPosition().getX());
-        getHitbox().setLayoutX(getPosition().getX());
-        getHitbox().setLayoutY(getPosition().getY());
-        //getHitbox().setTranslateY(getPosition().getY());
-        //getHitbox().setTranslateX(getSprite().getTranslateX());
-        //getHitbox().setTranslateY(getSprite().getTranslateY());
+        getSprite().setTranslateX(getPosition().getX());
+        getSprite().setTranslateY(getPosition().getY());
+//
+//        getHitbox().setLayoutX(getPosition().getX());
+        //       getHitbox().setTranslateY(getPosition().getY());
+        getHitbox().setTranslateX(getSprite().getTranslateX());
+        getHitbox().setTranslateY(getSprite().getTranslateY());
+
+        //getSprite().setTranslateX(getSprite().getTranslateX());
+        //getSprite().setTranslateY(getSprite().getTranslateY());
         getHitbox().setWidth(80);
         getHitbox().setHeight(100);
         getHitbox().resize(this);
-
+        setPos(getSprite().getTranslateX(), getSprite().getTranslateY());
         getSprite().setViewport(animating.getCurrentView());
         handle(); // Animations
+    }
+
+    public void setCharismaAttribute(int newLuckAttribute) {
+        this.charismaAttribute = newLuckAttribute;
+    }
+
+    public int getChrismaAttribute() {
+        return this.charismaAttribute;
     }
 
     public void setLuckAttribute(int newLuckAttribute) {
@@ -206,7 +215,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         return this.healthText;
     }
 
-    /*public void setMoving(boolean x) {
+    public void setMoving(boolean x) {
         moving = x;
     }
 
@@ -222,9 +231,12 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         return vertSpeed;
     }
 
+    public void setHorzSpeed(double v) {
+        horzSpeed = v;
+    }
+
     public void setVertSpeed(double v) {
         vertSpeed = v;
-<<<<<<< HEAD
     }
 
     @Override
@@ -256,47 +268,5 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 
     @Override
     public void visit(Bullet b) {
-    }
-=======
-    }*/
-
-    @Override
-    public void visit(RocketDog rd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(Enemy e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(TangibleEntity te) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(Obstruction obstruction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(AidItem ai) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(UglyDog ud) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void visit(Bullet b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void accept(IVisitor v) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

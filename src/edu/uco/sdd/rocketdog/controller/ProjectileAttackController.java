@@ -52,7 +52,7 @@ public class ProjectileAttackController implements AttackController {
   public boolean attack(TangibleEntity target) {
     double distance = controlledObject.getPosition().distance(target.getPosition());
     if (target instanceof Attackable && Math.abs(distance) < maxRange
-            && Math.abs(distance) > minRange) {
+            && Math.abs(distance) > minRange && !target.isImmune()) {
         Point2D velocity = target.getPosition()
                                  .subtract(controlledObject.getPosition())
                                  .normalize()
