@@ -61,7 +61,7 @@ public class LevelOne extends Level {
         addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(300).setY(650).setStart(50).setEnd(650).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
         //addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(400).setY(400).setEntityClass(enemy).setLevel(this).build(), 64, 64);
         //addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(300).setY(350).setEntityClass(enemy).setLevel(this).build(), 32, 32);
-        addEnemy(new DeliveryMan(500, 400), 400, 400);
+        //addEnemy(new DeliveryMan(500, 400), 400, 400);
 
         //done
         finishLevel();
