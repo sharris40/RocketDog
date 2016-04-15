@@ -15,4 +15,13 @@ public class SpitzDeadAnimateStrategy extends AbstractSpitzAnimationStrategy imp
         });
     }
 
+    @Override
+    public void handle() {
+        if (frameCount % frames.length == 0 && showIndex < frames.length - 1) {
+            showIndex++;
+        }
+        frameCount++;
+        currentView = frames[showIndex];
+    }
+
 }
