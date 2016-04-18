@@ -1,10 +1,12 @@
 package edu.uco.sdd.rocketdog.commands;
 
 import edu.uco.sdd.rocketdog.controller.RocketDogGame;
+import edu.uco.sdd.rocketdog.model.Level;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 
 // RocketDog Controller
 public class RocketDogController {
@@ -106,21 +108,26 @@ public class RocketDogController {
         moveDown.execute();
     }
 
-    public void shootButton(Group shootgroup) {
-        Node shooter = tangibleEntity.getSprite();
-        Bounds shooterBounds = shooter.localToScene(shooter.getBoundsInLocal());
-        double midY = (shooterBounds.getMaxY() + shooterBounds.getMinY()) / 2;
-        double maxX = shooterBounds.getMaxX();
+    public void shootButton(Level currentLevel, KeyCode k) {
+        //Node shooter = tangibleEntity.getSprite();
+        //Bounds shooterBounds = shooter.localToScene(shooter.getBoundsInLocal());
+        //double midY = (shooterBounds.getMaxY() + shooterBounds.getMinY()) / 2;
+        //double maxX = shooterBounds.getMaxX();
 
         /**
          * background has negative coordinates possibly, but we are adding bullet
          * with coordinates from tangibleEntity, need to subtract out the negative
          * coordinates of the Group that we're adding the bullet to. 
          */
-        shoot = new ShootRight(maxX + Math.abs(shootgroup.getTranslateX()),midY,shootgroup);
+        //shoot = new ShootRight(maxX + Math.abs(shootgroup.getTranslateX()),midY,currentLevel);
+        shoot = new ShootRight(currentLevel, k);
         shoot.execute();
 
     }
 
+
+    public Group getBulletGroup(){
+        return bulletGroup;
+    }
 
 }

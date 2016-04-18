@@ -6,6 +6,7 @@ import edu.uco.sdd.rocketdog.commands.RocketDogController;
 import edu.uco.sdd.rocketdog.model.HealthItem;
 import edu.uco.sdd.rocketdog.model.Level;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
@@ -41,7 +42,8 @@ public class DefaultKeyMapping implements KeyMapping {
                 //currentLevel.getRocketDog().setMoving(true);
                 break;      
             case J:
-                int i = currentLevel.checkFiredLaser();
+                rdController.shootButton(currentLevel, KeyCode.J);
+                /*int i = currentLevel.checkFiredLaser();
                 if (i == -1) {
                     break;
                 }
@@ -55,10 +57,11 @@ public class DefaultKeyMapping implements KeyMapping {
                     currentLevel.getLaserWeapon(i).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
                     currentLevel.getLaserWeapon(i).setPosition(new Point2D(currentLevel.getRocketDog().getPosition().getX() + 120,
                         currentLevel.getRocketDog().getPosition().getY() + 65));
-                }
+                }*/
                 break;
             case K:
-                int charge = currentLevel.largeLaserCharge();
+                rdController.shootButton(currentLevel, KeyCode.K);
+                /*int charge = currentLevel.largeLaserCharge();
                 currentLevel.update(charge);
                 if(charge == 3){
                     int j = currentLevel.checkFiredLargerLaser();
@@ -78,7 +81,7 @@ public class DefaultKeyMapping implements KeyMapping {
                         currentLevel.getLargeLaserWeapon(j).getSprite().setScaleX(1);
                         currentLevel.getLargeLaserWeapon(j).setVelocity(new Point2D(speed, currentLevel.getRocketDog().getVelocity().getY()));
                     }
-                }
+                }*/
                 break;
             case F1:
                 currentLevel.getRocketDog().setCurrentHealth(1000);

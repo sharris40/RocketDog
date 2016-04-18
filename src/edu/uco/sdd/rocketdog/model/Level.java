@@ -43,9 +43,9 @@ public class Level extends Scene implements Observer, ILevel {
     protected boolean isDone;
     private Text scoreText;
     private int largeLaserCharge;
-    final protected ArrayList<LaserAttack> weapon;
+    final public ArrayList<LaserAttack> weapon;
     //final private LaserWeapon weapon;
-    final protected ArrayList<LargeLaserAttack> largeWeapon;
+    final public ArrayList<LargeLaserAttack> largeWeapon;
     protected Group viewportGroup;
 
 
