@@ -171,7 +171,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
         enemy.getHitbox().setHeight(height);
-        enemy.setCurrentHealth(10000);
+        enemy.setCurrentHealth(10);
         enemy.setLevel(this);
 
         //Add enemy information to level
