@@ -27,7 +27,7 @@ public class LevelTwo extends Level {
     final public static int VIEWPORT_MIN_X = 0;
 
     private Group backgroundGroup;
-    //private Group viewportGroup;
+    private Group viewportGroup;
     private Group levelItems;
     private Text viewportCoordinates;
     private Boolean isDone;
@@ -231,5 +231,13 @@ public class LevelTwo extends Level {
             viewportGroup.getChildren().add(getLargeLaserWeapon(i).getSprite());
             viewportGroup.getChildren().add(getLargeLaserWeapon(i).getHitbox());
         }
+    }
+
+     public LaserAttack getLaserWeapon(int i) {
+        return weapon.get(i);
+    }
+
+    public LargeLaserAttack getLargeLaserWeapon(int i) {
+        return largeWeapon.get(i);
     }
 }

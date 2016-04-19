@@ -43,9 +43,9 @@ public class Level extends Scene implements Observer, ILevel {
     protected boolean isDone;
     private Text scoreText;
     private int largeLaserCharge;
-    final protected ArrayList<LaserAttack> weapon;
+    final public ArrayList<LaserAttack> weapon;
     //final private LaserWeapon weapon;
-    final protected ArrayList<LargeLaserAttack> largeWeapon;
+    final public ArrayList<LargeLaserAttack> largeWeapon;
     protected Group viewportGroup;
 
 
@@ -171,7 +171,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
         enemy.getHitbox().setHeight(height);
-        enemy.setCurrentHealth(10000);
+        enemy.setCurrentHealth(10);
         enemy.setLevel(this);
 
         //Add enemy information to level
@@ -480,7 +480,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-            if (laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0) {
+            if (laser.getPosition().getX() > root.minWidth(500)|| laser.getPosition().getX() < 0) {
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -488,6 +488,21 @@ public class Level extends Scene implements Observer, ILevel {
             }
             laser.update();
             laser.getHitbox().setVisible(visibleHitBoxes);
+
+            for(int i = 0; i < enemies.size(); i++){
+                if (laser.hasCollided(enemies.get(i))){
+                laser.setPos(0, -45);
+                laser.setDead(false);
+                laser.setVisableOff();
+                laser.setVel(0, 0);
+                rocketDog.setScore(rocketDog.getScore() + 20);
+                update(rocketDog.getScore());
+                enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 2);
+                update(enemies.get(i).getCurrentHealth());
+                if(enemies.get(i).currentHealth <= 0)
+                    removeEnemy(enemies.get(i));
+                }
+            }
         });
         //weapon.update();
 
@@ -503,6 +518,21 @@ public class Level extends Scene implements Observer, ILevel {
             }
             largeLaser.update();
             largeLaser.getHitbox().setVisible(visibleHitBoxes);
+
+            for(int i = 0; i < enemies.size(); i++){
+                if (largeLaser.hasCollided(enemies.get(i))){
+                    largeLaser.setPos(0, -150);
+                    largeLaser.setDead(false);
+                    largeLaser.setVisableOff();
+                    largeLaser.setVel(0, 0);
+                    rocketDog.setScore(rocketDog.getScore() + 50);
+                    update(rocketDog.getScore());
+                    enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 5);
+                    update(enemies.get(i).getCurrentHealth());
+                    if(enemies.get(i).currentHealth <= 0)
+                        removeEnemy(enemies.get(i));
+                }
+            }
         });
         //largeWeapon.update();
 
