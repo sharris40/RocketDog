@@ -67,22 +67,17 @@ public abstract class TangibleEntity implements Entity{
     protected ArrayList<MovementController> controllers = new ArrayList<>();
 
     public boolean hasCollided(TangibleEntity otherEntity) {
-        if(!isMultiHibox()){
+        if(!otherEntity.isMultiHibox()){
             return getHitbox().getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
         }
-        else{
+       else{
             for(int i = 0; i < 3; i++){
-            //getHitboxes().forEach((hitbox) ->{
-            if(Hitboxes.get(i).getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent()))
-                return true;
-        //});
-            //for(int i = 0; i < 3; i++){
-                //return getHitboxes().get(i).getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
-            //}
+                if(getHitbox().getBoundsInParent().intersects(otherEntity.getHitboxes().get(i).getBoundsInParent()))
+                    return true;
             }
-        }
-        return false;
-    }
+          }
+          return false;
+       } 
     public void setImmunity(boolean value) {
         isImmune = value;
     }

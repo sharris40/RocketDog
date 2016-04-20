@@ -100,7 +100,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Laser Weapon information added to game
         for (int i = 0; i < 3; i++) {
             weapon.add(new LaserAttack());
-            getLaserWeapon(i).setPosition(new Point2D(100, 600));
+            getLaserWeapon(i).setPosition(new Point2D(0, -200));
             getLaserWeapon(i).getHitbox().setWidth(44);
             getLaserWeapon(i).getHitbox().setHeight(44);
             getLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
@@ -115,7 +115,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Large Laser Weapon information added to game
         for (int i = 0; i < 3; i++) {
             largeWeapon.add(new LargeLaserAttack());
-            getLargeLaserWeapon(i).setPosition(new Point2D(100, 600));
+            getLargeLaserWeapon(i).setPosition(new Point2D(0, -300));
             getLargeLaserWeapon(i).getHitbox().setWidth(200);
             getLargeLaserWeapon(i).getHitbox().setHeight(133);
             getLargeLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
@@ -171,7 +171,10 @@ public class Level extends Scene implements Observer, ILevel {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
         enemy.getHitbox().setHeight(height);
-        enemy.setCurrentHealth(10);
+        if(enemy instanceof DeliveryMan)
+            enemy.setCurrentHealth(100);
+        else
+            enemy.setCurrentHealth(10);
         enemy.setLevel(this);
 
         //Add enemy information to level      
@@ -475,8 +478,15 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.getHealthText().setVisible(visibleHitBoxes);
         rocketDog.addObserver(this);
 
+
         Map<Entity, Boolean> changed = new HashMap<>();
         changed.put(rocketDog, true);
+
+        //enemies.stream().forEach((enemy) -> {
+            //Update enemy
+           // enemy.update();
+        //});
+
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
