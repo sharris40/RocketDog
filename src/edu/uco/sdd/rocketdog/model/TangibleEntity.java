@@ -72,7 +72,13 @@ public abstract class TangibleEntity implements Entity{
         }
         else{
             for(int i = 0; i < 3; i++){
-                return getHitboxes().get(i).getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
+            //getHitboxes().forEach((hitbox) ->{
+            if(Hitboxes.get(i).getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent()))
+                return true;
+        //});
+            //for(int i = 0; i < 3; i++){
+                //return getHitboxes().get(i).getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
+            //}
             }
         }
         return false;

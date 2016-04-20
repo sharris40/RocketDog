@@ -174,7 +174,7 @@ public class Level extends Scene implements Observer, ILevel {
         enemy.setCurrentHealth(10);
         enemy.setLevel(this);
 
-        //Add enemy information to level
+        //Add enemy information to level      
         enemies.add(enemy);
         this.levelItems.getChildren().add(enemy.getSprite());
         if (!enemy.isMultiHibox()) {
@@ -182,7 +182,7 @@ public class Level extends Scene implements Observer, ILevel {
         } else if (enemy.isMultiHibox()) {
             enemy.getHitboxes().stream().forEach((hitbox) -> {
                 this.levelItems.getChildren().add(hitbox);
-            });
+            });      
         }
     }
 
@@ -490,6 +490,7 @@ public class Level extends Scene implements Observer, ILevel {
             laser.getHitbox().setVisible(visibleHitBoxes);
 
             for(int i = 0; i < enemies.size(); i++){
+
                 if (laser.hasCollided(enemies.get(i))){
                 laser.setPos(0, -45);
                 laser.setDead(false);
