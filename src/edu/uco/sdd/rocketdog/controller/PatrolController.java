@@ -146,7 +146,7 @@ public class PatrolController extends AccelerationController {
         for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
             if (controlledBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
                 controlledObject.removeController(this);
-                ObjectTraverseController newController = new ObjectTraverseController(controlledObject, obstruction, this, veltemp, new Point2D(0, 0));
+                ObjectTraverseController newController = new ObjectTraverseController(controlledObject, this, veltemp, new Point2D(0, 0));
                 controlledObject.addController(newController);
                 return newController.process(changedEntities);
             }
