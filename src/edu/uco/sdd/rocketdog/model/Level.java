@@ -491,7 +491,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-            if(laser.getPosition().getX() > 1000 || laser.getPosition().getX() < 0){
+            if(laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0){
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -522,7 +522,7 @@ public class Level extends Scene implements Observer, ILevel {
         //weapon.getHitbox().setVisible(visibleHitBoxes);
         //Update the large weapon attack
         largeWeapon.stream().forEach((largeLaser) -> {
-            if(largeLaser.getPosition().getX() > 1000 || largeLaser.getPosition().getX() < 0){
+            if(largeLaser.getPosition().getX() > super.getWidth() || largeLaser.getPosition().getX() < 0){
                 largeLaser.setPos(0, -150);
                 largeLaser.setDead(false);
                 largeLaser.setVisableOff();
