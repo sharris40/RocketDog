@@ -100,7 +100,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Laser Weapon information added to game
         for (int i = 0; i < 3; i++) {
             weapon.add(new LaserAttack());
-            getLaserWeapon(i).setPosition(new Point2D(100, 600));
+            getLaserWeapon(i).setPosition(new Point2D(0, -200));
             getLaserWeapon(i).getHitbox().setWidth(44);
             getLaserWeapon(i).getHitbox().setHeight(44);
             getLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
@@ -115,7 +115,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Large Laser Weapon information added to game
         for (int i = 0; i < 3; i++) {
             largeWeapon.add(new LargeLaserAttack());
-            getLargeLaserWeapon(i).setPosition(new Point2D(100, 600));
+            getLargeLaserWeapon(i).setPosition(new Point2D(0, -300));
             getLargeLaserWeapon(i).getHitbox().setWidth(200);
             getLargeLaserWeapon(i).getHitbox().setHeight(133);
             getLargeLaserWeapon(i).getHitbox().setStroke(Color.TRANSPARENT);
@@ -171,10 +171,13 @@ public class Level extends Scene implements Observer, ILevel {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
         enemy.getHitbox().setHeight(height);
-        enemy.setCurrentHealth(10);
+        if(enemy instanceof DeliveryMan)
+            enemy.setCurrentHealth(100);
+        else
+            enemy.setCurrentHealth(10);
         enemy.setLevel(this);
 
-        //Add enemy information to level
+        //Add enemy information to level      
         enemies.add(enemy);
         this.levelItems.getChildren().add(enemy.getSprite());
         if (!enemy.isMultiHibox()) {
@@ -182,7 +185,7 @@ public class Level extends Scene implements Observer, ILevel {
         } else if (enemy.isMultiHibox()) {
             enemy.getHitboxes().stream().forEach((hitbox) -> {
                 this.levelItems.getChildren().add(hitbox);
-            });
+            });      
         }
     }
 
@@ -475,12 +478,19 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.getHealthText().setVisible(visibleHitBoxes);
         rocketDog.addObserver(this);
 
+
         Map<Entity, Boolean> changed = new HashMap<>();
         changed.put(rocketDog, true);
+
+        //enemies.stream().forEach((enemy) -> {
+            //Update enemy
+           // enemy.update();
+        //});
+
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-            if (laser.getPosition().getX() > root.minWidth(500)|| laser.getPosition().getX() < 0) {
+            if(laser.getPosition().getX() > 1000 || laser.getPosition().getX() < 0){
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -490,6 +500,7 @@ public class Level extends Scene implements Observer, ILevel {
             laser.getHitbox().setVisible(visibleHitBoxes);
 
             for(int i = 0; i < enemies.size(); i++){
+
                 if (laser.hasCollided(enemies.get(i))){
                 laser.setPos(0, -45);
                 laser.setDead(false);
@@ -510,7 +521,7 @@ public class Level extends Scene implements Observer, ILevel {
         //weapon.getHitbox().setVisible(visibleHitBoxes);
         //Update the large weapon attack
         largeWeapon.stream().forEach((largeLaser) -> {
-            if (largeLaser.getPosition().getX() > super.getWidth() || largeLaser.getPosition().getX() < 0) {
+            if(largeLaser.getPosition().getX() > 1000 || largeLaser.getPosition().getX() < 0){
                 largeLaser.setPos(0, -150);
                 largeLaser.setDead(false);
                 largeLaser.setVisableOff();

@@ -63,7 +63,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         }
 
         if (!moving && getHorzSpeed() > 0) {
-            setHorzSpeed(getHorzSpeed() - .5);
+            setHorzSpeed(getHorzSpeed() - .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getRightSpeed() > 0){
             //setRightSpeed(getRightSpeed()-.3);
@@ -71,7 +71,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         }
 
         if (!moving && getHorzSpeed() < 0) {
-            setHorzSpeed(getHorzSpeed() + .5);
+            setHorzSpeed(getHorzSpeed() + .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
             //if(!moving && getLeftSpeed() < 0){
             //setLeftSpeed(getLeftSpeed()+.3);
@@ -79,14 +79,14 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         }
 
         if (!moving && getVertSpeed() < 0) {
-            setVertSpeed(getVertSpeed() + .5);
+            setVertSpeed(getVertSpeed() + .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getUpSpeed() < 0){
             //setUpSpeed(getUpSpeed() +.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getUpSpeed()));
         }
         if (!moving && getVertSpeed() > 0) {
-            setVertSpeed(getVertSpeed() - .5);
+            setVertSpeed(getVertSpeed() - .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
             //if(!moving && getDownSpeed() > 0){
             //setDownSpeed(getDownSpeed() -.5);

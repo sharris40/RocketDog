@@ -67,6 +67,11 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         debugText.setLayoutX(1500);
         debugText.setLayoutY(200);
 
+        getSprite().setLayoutX(x);
+        getSprite().setLayoutY(y);
+        getHitbox().setLayoutX(x);
+        getHitbox().setLayoutY(x);
+ 
         this.setMultiHibox(true);
         hitboxes = new ArrayList();
         Hitbox hitbox = new Hitbox(this.getPosition().getX(), this.getPosition().getY());
