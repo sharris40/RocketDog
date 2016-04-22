@@ -43,6 +43,7 @@ public class Level extends Scene implements Observer, ILevel {
     protected boolean isDone;
     private Text scoreText;
     private int largeLaserCharge;
+    int loadDelay = 0;
     final public ArrayList<LaserAttack> weapon;
     //final private LaserWeapon weapon;
     final public ArrayList<LargeLaserAttack> largeWeapon;
@@ -85,7 +86,7 @@ public class Level extends Scene implements Observer, ILevel {
         //root.setAlignment(Pos.TOP_LEFT);
 
         //Hero information added to game
-        rocketDog.setPosition(new Point2D(150, 350));
+        rocketDog.setPosition(new Point2D(150, 600));
         rocketDog.addEntityClass(player, 1);
         rocketDog.getHitbox().setWidth(130);
         rocketDog.getHitbox().setHeight(130);
