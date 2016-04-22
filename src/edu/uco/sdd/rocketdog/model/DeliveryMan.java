@@ -125,17 +125,17 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         } else {
             getSprite().setScaleX(1);
         }
-        getSprite().setTranslateX(getPosition().getX());
-        getSprite().setTranslateY(getPosition().getY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
 
-        getHitbox().setTranslateX(getPosition().getX());
-        getHitbox().setTranslateY(getPosition().getY());
+        getHitbox().setLayoutX(getPosition().getX());
+        getHitbox().setLayoutY(getPosition().getY());
 
         getSprite().setViewport(animating.getCurrentView());
 
         hitboxes.forEach((hitbox) -> {
-            hitbox.setTranslateX(getSprite().getTranslateX());
-            hitbox.setTranslateY(getSprite().getTranslateY());
+            hitbox.setLayoutX(this.getSprite().getLayoutX());
+            hitbox.setLayoutY(getSprite().getLayoutY());
             hitbox.resize(this);
         });
 

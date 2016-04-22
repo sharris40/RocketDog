@@ -200,7 +200,15 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-        levelItems.getChildren().remove(enemy.getHitbox());
+
+        if (!enemy.isMultiHibox()) {
+            this.levelItems.getChildren().remove(enemy.getHitbox());
+        } else if (enemy.isMultiHibox()) {
+            enemy.getHitboxes().stream().forEach((hitbox) -> {
+                this.levelItems.getChildren().remove(hitbox);
+            });
+        }
+        //levelItems.getChildren().remove(enemy.getHitbox());
     }
 
     public void addAidItem(AidItem aidItem, double width, double height) {
