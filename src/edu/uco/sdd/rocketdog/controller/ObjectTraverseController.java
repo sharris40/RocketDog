@@ -1,37 +1,33 @@
 package edu.uco.sdd.rocketdog.controller;
 
+import edu.uco.sdd.rocketdog.astar.Node;
+import edu.uco.sdd.rocketdog.astar.OrderedNodeMap;
 import edu.uco.sdd.rocketdog.model.Entity;
 import edu.uco.sdd.rocketdog.model.Obstruction;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 
 public class ObjectTraverseController extends AccelerationController {
 
-    private Obstruction target;
     private MovementController next;
     private Point2D nextVelocity, nextAcceleration, destPoint, lastPosition;
     private final LinkedList<Point2D> path;
 
-    public ObjectTraverseController(TangibleEntity entity, Obstruction target, MovementController nextController, Point2D nextVelocity, Point2D nextAcceleration) {
+    public ObjectTraverseController(TangibleEntity entity, MovementController nextController, Point2D nextVelocity, Point2D nextAcceleration) {
         super(entity);
-        this.target = target;
         this.next = nextController;
         this.nextVelocity = nextVelocity;
         this.nextAcceleration = nextAcceleration;
         path = new LinkedList<>();
         findPathOut();
-    }
-
-    public Obstruction getTarget() {
-        return target;
-    }
-
-    public void setTarget(Obstruction target) {
-        this.target = target;
     }
 
     public MovementController getNext() {
@@ -70,9 +66,116 @@ public class ObjectTraverseController extends AccelerationController {
         return !(nextLoc.getX() > obstacle.getMaxX() || nextLoc.getX() + self.getWidth() < obstacle.getMinX());
     }*/
 
+    private boolean positionBlocked(Bounds bounds) {
+        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
+            if (bounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Map<Point2D, Point2D> astar(Point2D start, double xSpacing, double ySpacing) {
+        Set<Point2D> closed = new HashSet<>();
+        Set<Point2D> open = new HashSet<>();
+        open.add(start);
+        Map<Point2D, Point2D> from = new HashMap<>();
+        OrderedNodeMap scoreFromStart = new OrderedNodeMap();
+        scoreFromStart.put(start, 0.);
+        OrderedNodeMap totalScore = new OrderedNodeMap();
+        totalScore.put(start, destPoint.distance(start));
+        while (!open.isEmpty()) {
+            List<Node> nodes = totalScore.getNodeList();
+            Node current = null;
+            for (Node node : nodes) {
+                if (open.contains(node.getLocation())) {
+                    current = node;
+                }
+            }
+            if (current == null)
+                return null;
+            if (Math.abs(destPoint.getX() - current.getLocation().getX()) < xSpacing
+                && Math.abs(destPoint.getY() - current.getLocation().getY()) < ySpacing)
+                return from;
+            open.remove(current.getLocation());
+            closed.add(current.getLocation());
+            Point2D up = current.getLocation().add(0, -ySpacing);
+            Point2D down = current.getLocation().add(0, ySpacing);
+            Point2D left = current.getLocation().add(-xSpacing, 0);
+            Point2D right = current.getLocation().add(xSpacing, 0);
+            if (!closed.contains(up)) {
+                if (positionBlocked(new BoundingBox(up.getX(), up.getY(),
+                        controlledObject.getHitbox().getBoundsInParent().getWidth(),
+                        controlledObject.getHitbox().getBoundsInParent().getHeight()))) {
+                    open.remove(up);
+                    closed.add(up);
+                } else {
+                    double currentGuess = ySpacing + scoreFromStart.get(current);
+                    if (!open.contains(up)) {
+                        open.add(up);
+                    } else if (currentGuess <= scoreFromStart.get(up)) {
+                        from.put(up, current.getLocation());
+                        scoreFromStart.put(up, currentGuess);
+                        totalScore.put(up, currentGuess + destPoint.distance(up));
+                    }
+                }
+            }
+            if (!closed.contains(down)) {
+                if (positionBlocked(new BoundingBox(down.getX(), down.getY(),
+                        controlledObject.getHitbox().getBoundsInParent().getWidth(),
+                        controlledObject.getHitbox().getBoundsInParent().getHeight()))) {
+                    open.remove(down);
+                    closed.add(down);
+                } else {
+                    double currentGuess = ySpacing + scoreFromStart.get(current);
+                    if (!open.contains(down)) {
+                        open.add(down);
+                    } else if (currentGuess <= scoreFromStart.get(down)) {
+                        from.put(down, current.getLocation());
+                        scoreFromStart.put(down, currentGuess);
+                        totalScore.put(down, currentGuess + destPoint.distance(down));
+                    }
+                }
+            }
+            if (!closed.contains(left)) {
+                if (positionBlocked(new BoundingBox(left.getX(), left.getY(),
+                        controlledObject.getHitbox().getBoundsInParent().getWidth(),
+                        controlledObject.getHitbox().getBoundsInParent().getHeight()))) {
+                    open.remove(left);
+                    closed.add(left);
+                } else {
+                    double currentGuess = xSpacing + scoreFromStart.get(current);
+                    if (!open.contains(left)) {
+                        open.add(left);
+                    } else if (currentGuess <= scoreFromStart.get(left)) {
+                        from.put(left, current.getLocation());
+                        scoreFromStart.put(left, currentGuess);
+                        totalScore.put(left, currentGuess + destPoint.distance(left));
+                    }
+                }
+            }
+            if (!closed.contains(right)) {
+                if (positionBlocked(new BoundingBox(right.getX(), right.getY(),
+                        controlledObject.getHitbox().getBoundsInParent().getWidth(),
+                        controlledObject.getHitbox().getBoundsInParent().getHeight()))) {
+                    open.remove(right);
+                    closed.add(right);
+                } else {
+                    double currentGuess = xSpacing + scoreFromStart.get(current);
+                    if (!open.contains(right)) {
+                        open.add(right);
+                    } else if (currentGuess <= scoreFromStart.get(right)) {
+                        from.put(right, current.getLocation());
+                        scoreFromStart.put(right, currentGuess);
+                        totalScore.put(right, currentGuess + destPoint.distance(up));
+                    }
+                }
+            }
+        }
+    }
+
     private void findPathOut() {
         Bounds cbtemp = controlledObject.getHitbox().getBoundsInParent(),
-                targetBounds = target.getHitbox().getBoundsInParent(),
                 controlledBounds;
         double x = cbtemp.getMinX(), y = cbtemp.getMinY(), width = cbtemp.getWidth(), height = cbtemp.getHeight();
         Point2D velAdd = new Point2D(nextVelocity.getX(), nextVelocity.getY());
@@ -81,7 +184,7 @@ public class ObjectTraverseController extends AccelerationController {
             y += velAdd.getY();
             controlledBounds = new BoundingBox(x, y, width, height);
             velAdd = velAdd.add(nextAcceleration);
-        } while (controlledBounds.intersects(target.getHitbox().getBoundsInParent()));
+        } while (positionBlocked(controlledBounds));
         destPoint = new Point2D(x, y);
         boolean blockedUp = true, blockedDown = true, blockedLeft = true, blockedRight = true;
         if (cbtemp.getMinX()  > targetBounds.getMaxX() || cbtemp.getMaxX() < targetBounds.getMinX()) {
