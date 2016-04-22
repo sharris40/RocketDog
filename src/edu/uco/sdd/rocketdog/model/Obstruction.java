@@ -68,21 +68,22 @@ public class Obstruction extends TangibleEntity implements IAnimateStrategy {
     @Override
     public void processCollision(TangibleEntity te){
         super.processCollision(te);
+        double rdMaxY = te.getHitbox().localToScene(te.getHitbox().getBoundsInParent()).getMaxY();
+        double rdMinY = te.getHitbox().localToScene(te.getHitbox().getBoundsInParent()).getMinY();
+        double boxMaxY = this.getHitbox().localToScene(this.getHitbox().getBoundsInParent()).getMaxY();
+        double boxMinY = this.getHitbox().localToScene(this.getHitbox().getBoundsInParent()).getMinY();
         
         if (this.isColliding()) {
-
-            //set accel to 0,0
-            //set X and Y velocity in the opposite direction
-            //then update and set velocity to 0
-            //this prevents RD from moving through the obstruction
-            //this.rd = (RocketDog)te;
-            //this.rd.setHorzSpeed(0);
-            //this.rd.setVertSpeed(0);
-            //te.setAcceleration(new Point2D(0,0));
-            //te.setVelocity(new Point2D(-te.getVelocity().getX(), -te.getVelocity().getY()));
-            //te.update();
-            //te.setVelocity(new Point2D(0, 0));
-            te.setColliding(true);
+            this.rd = (RocketDog)te;
+            
+            this.rd.setHorzSpeed(-rd.getHorzSpeed());
+            this.rd.setVertSpeed(-rd.getVertSpeed());
+            te.setVelocity(new Point2D(-te.getVelocity().getX(), -te.getVelocity().getY()));
+            te.update();
+            te.setVelocity(new Point2D(0, 0));
+            this.rd.setHorzSpeed(0);
+            this.rd.setVertSpeed(0);
+            te.setColliding(false);
         } else {
             te.setColliding(false);
         }
@@ -117,7 +118,5 @@ public class Obstruction extends TangibleEntity implements IAnimateStrategy {
     public boolean isVisible() {
         return visible;
     }
-
-
 
 }
