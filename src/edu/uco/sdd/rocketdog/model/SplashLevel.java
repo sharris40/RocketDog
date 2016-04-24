@@ -3,13 +3,12 @@ package edu.uco.sdd.rocketdog.model;
 import static edu.uco.sdd.rocketdog.controller.RocketDogGame.GAME_SCREEN_HEIGHT;
 import static edu.uco.sdd.rocketdog.controller.RocketDogGame.GAME_SCREEN_WIDTH;
 import java.util.Optional;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Alert;
@@ -26,50 +25,49 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class SplashLevel extends Scene implements ILevel {
+public class SplashLevel extends Level {
 
-    private  ImageView splashScreenTextArea,splashScreenBackplate;
-    private  VBox buttonContainer;
-    private  Insets buttonContainerPadding;
-    private  Button startButton,instructionsButton,optionsButton,
-            scoresButton,creditsButton, exitButton;
-    private  Button optionsCloseButton,
-            optionsDefaultButton,optionsWASDButton;
+    private ImageView splashScreenTextArea, splashScreenBackplate;
+    private VBox buttonContainer;
+    private Insets buttonContainerPadding;
+    private Button startButton, instructionsButton, optionsButton,
+            scoresButton, creditsButton, exitButton;
+    private Button optionsCloseButton,
+            optionsDefaultButton, optionsWASDButton;
     private Image splashScreenbg, instructionsLayer, scoresLayer, optionsLayer, creditsLayer;
-    private BorderPane root;
+    
     HBox hboxCenter;
     GridPane grid;
     BorderPane bp;
     private boolean isDone;
-
     Scene splashScene;
-    private Image logo,copyright;
+    private Image logo, copyright;
     private ImageView imgView;
-    int width,height;
-    private Slider musicSlider,ambientSlider;
+    int width, height;
+    private Slider musicSlider, ambientSlider;
     private Separator sepHor;
-    private Label ambianceVolumeLabel,musicLabel,soundLabel;
+    private Label ambianceVolumeLabel, musicLabel, soundLabel;
     public CheckBox ck;
-    private String selectedFont="Comic Sans MS";
-    private boolean musicIsEnabled=true;
+    private String selectedFont = "Comic Sans MS";
+    private boolean musicIsEnabled = true;
     SoundManager soundManager;
+    private GridPane optionsPane;
 
-    public SplashLevel(BorderPane root, SoundManager soundManager) {
-        super(root,1000,924);
+    public SplashLevel(Group root,SoundManager soundManager) {
+        super(root, 1000, 924);
         isDone = false;
-        this.root = root;
+        this.bp= new BorderPane();
         this.soundManager= soundManager;
-        HBox hboxTop= addHBox();
-        HBox hboxBottom=addHBox();
-
+        soundManager.startGameMusicForLevel(0);
+        HBox hboxTop = addHBox();
+        HBox hboxBottom = addHBox();
         createOtherComponents();
-        buttonContainer=createMenuVBox();
+        buttonContainer = createMenuVBox();
         loadImages();
 
         /**
@@ -79,13 +77,12 @@ public class SplashLevel extends Scene implements ILevel {
             CutSceneStage cs = new CutSceneStage();
             String s = "/splash.mp4";
             cs.CutSceneStage("./src/splash.mp4").showAndWait();
-            isDone=true;
+            isDone = true;
         });
 
         /**
          * *****************EXIT APPLICATION******************
          */
-
         exitButton.setOnAction((ActionEvent) -> {
             System.out.println("Quitting!");
             addStackPaneExit(hboxCenter);
@@ -95,9 +92,12 @@ public class SplashLevel extends Scene implements ILevel {
          * *****************GAME INSTRUCTIONS******************
          */
         instructionsButton.setOnAction((ActionEvent) -> {
-            try{hboxCenter=createInstructHBox();}
-            catch(Exception e){System.out.println("createInstructionBox");}
-            root.setCenter(hboxCenter);
+            try {
+                hboxCenter = createInstructHBox();
+            } catch (Exception e) {
+                System.out.println("createInstructionBox");
+            }
+            bp.setCenter(hboxCenter);
             splashScreenBackplate.setVisible(true);
             splashScreenTextArea.setVisible(true);
         });
@@ -106,103 +106,102 @@ public class SplashLevel extends Scene implements ILevel {
          * *****************KEYBOARD KEY MAPPING******************
          */
         optionsButton.setOnAction((ActionEvent) -> {
-            try{grid=createOptionsGridPane();}
-            catch(Exception e){System.out.println("createOptionsGridPane");}
-            root.setCenter(grid);
+            try {
+                hboxCenter = createOptionsHBox();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            bp.setCenter(hboxCenter);
             splashScreenBackplate.setVisible(true);
             splashScreenTextArea.setVisible(true);
-            }
+        }
         );
 
         /**
          * *****************SCORES BOARD******************
          */
         scoresButton.setOnAction((ActionEvent) -> {
-            try{hboxCenter=createScoresHBox();}
-            catch(Exception e){System.out.println("createOptionsGridPane");}
-            root.setCenter(hboxCenter);
+            try {
+                hboxCenter = createScoresHBox();
+            } catch (Exception e) {
+            }
+            bp.setCenter(hboxCenter);
             splashScreenBackplate.setVisible(true);
             splashScreenTextArea.setVisible(true);
-            }
+        }
         );
         /**
          * *****************SCORES BOARD******************
          */
         creditsButton.setOnAction((ActionEvent) -> {
-            hboxCenter=createCreditsHBox();
-            root.setCenter( hboxCenter);
+            hboxCenter = createCreditsHBox();
+            bp.setCenter(hboxCenter);
             splashScreenBackplate.setVisible(true);
             splashScreenTextArea.setVisible(true);
         }
         );
         splashScreenBackplate.setImage(splashScreenbg);
-        root.getChildren().add(splashScreenBackplate);
-        root.getChildren().add(splashScreenTextArea);
-        root.setTop(hboxTop);
+        bp.getChildren().add(splashScreenBackplate);
+        bp.getChildren().add(splashScreenTextArea);
+        bp.setTop(hboxTop);
         addStackPaneLogo(hboxTop);
-        root.setLeft(buttonContainer);
+        bp.setLeft(buttonContainer);
         buttonContainer.setAlignment(Pos.TOP_CENTER);
-        root.setBottom(hboxBottom);
+        bp.setBottom(hboxBottom);
         hboxBottom.setAlignment(Pos.CENTER);
         addStackPaneCopyRight(hboxBottom);
+        root.getChildren().add(bp);
     }
 
     private void loadImages() {
-           // load all needed images
-           splashScreenbg = new Image("/splashscreenbg.png",GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, true, true, true);
-           instructionsLayer = new Image("/instruct.png", 800, GAME_SCREEN_HEIGHT, true, false, true);
-           optionsLayer = new Image("/options.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
-           scoresLayer = new Image("/scores.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
-           creditsLayer= new Image("/credits.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
-           copyright= new Image("/copyr.png",GAME_SCREEN_WIDTH, 35, true, true, true);//allrightsreserved png
-           logo=new Image("/logo_2.png",GAME_SCREEN_WIDTH, 95, true, true, true);
-       }
+        // load all needed images
+        splashScreenbg = new Image("/splashscreenbg.png", GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, true, true, true);
+        instructionsLayer = new Image("/instruct.png", 800, GAME_SCREEN_HEIGHT, true, false, true);
+        optionsLayer = new Image("/options.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
+        scoresLayer = new Image("/scores.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
+        creditsLayer = new Image("/credits.png", 800, GAME_SCREEN_HEIGHT, true, true, true);
+        copyright = new Image("/copyr.png", GAME_SCREEN_WIDTH, 35, true, true, true);//allrightsreserved png
+        logo = new Image("/logo_2.png", GAME_SCREEN_WIDTH, 95, true, true, true);
+    }
 
-    private void createOtherComponents(){
+    private void createOtherComponents() {
         splashScreenTextArea = new ImageView();
         splashScreenBackplate = new ImageView();
     }
-    public VBox createCreditsVbox(){
-        VBox creditsBox= new VBox();
-        Label creditsLabel= new Label("Credits");
-        Label lbl1= new Label("Richard Dobie");
-        Label lbl2= new Label("Spencer Harris");
-        Label lbl3= new Label("Sophia Msaaf");
-        Label lbl4= new Label("Dwayne Page");
-        Label lbl5= new Label("Noah Sefcik");
-        Label lbl6= new Label("Kody Strickland");
-        creditsBox.getChildren().addAll(creditsLabel,lbl1,lbl2,lbl3,lbl4,lbl5,lbl6);
-        return creditsBox;
-    }
-    public void createOptionsButtons(){
+
+    
+
+    public void createOptionsButtons() {
         optionsCloseButton = new Button("Save");
         optionsDefaultButton = new Button("Default KeyMapping");
         optionsWASDButton = new Button("WASD KeyMapping");
         optionsDefaultButton.setDisable(true);
     }
-    public void createMusicControls(){
+    
+    public void createMusicControls() {
         soundLabel = new Label("Sound");
         sepHor = new Separator();
-        VBox vCheckBox= new VBox();
-        ck= new CheckBox("Enable");
+        ck = new CheckBox("Enable");
         ck.selectedProperty().setValue(musicIsEnabled);
-        root.getChildren().add(vCheckBox);
         musicLabel = new Label("Music");
-        ambianceVolumeLabel= new Label("Ambient");
+        ambianceVolumeLabel = new Label("Ambient");
         musicSlider = new Slider(0.0, 1.0, 1.0);
         ambientSlider = new Slider(0.0, 1.0, 1.0);
+        System.out.println("music controls created");
+        musicSlider.setValue(soundManager.bgMusicPlayer.getCurrentVolume());
+        ambientSlider.setValue(soundManager.amMusicPlayer.getCurrentVolume());
     }
-    public GridPane createOptionsGridPane(){
-        GridPane optionsPane=new GridPane();// grid holding options pane components
+
+    public GridPane createOptionsGridPane() {
         //Creating a GridPane container
+        optionsPane = new GridPane();// grid holding options pane components
         optionsPane.setPadding(new Insets(10, 10, 10, 10));
         optionsPane.setVgap(5);
         optionsPane.setHgap(5);
 
         createOptionsButtons();
         createMusicControls();
-        musicSlider.setValue(soundManager.mp_bg.getVolume());
-        ambientSlider.setValue(soundManager.mp_am.getVolume());
+        
         //column then rown
         GridPane.setConstraints(optionsDefaultButton, 0, 3);
         GridPane.setConstraints(optionsWASDButton, 1, 3);
@@ -213,7 +212,7 @@ public class SplashLevel extends Scene implements ILevel {
         sepHor.setValignment(VPos.CENTER);
         GridPane.setConstraints(sepHor, 0, 5);
         GridPane.setColumnSpan(sepHor, 7);
-        GridPane.setConstraints(ck,0,6);
+        GridPane.setConstraints(ck, 0, 6);
         GridPane.setConstraints(musicLabel, 0, 7);
         GridPane.setConstraints(musicSlider, 1, 7);
         GridPane.setConstraints(ambianceVolumeLabel, 0, 8);
@@ -222,24 +221,27 @@ public class SplashLevel extends Scene implements ILevel {
 
         ck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
             System.out.println(ck.isSelected());
-            if(ck.isSelected()){
-                soundManager.muteBgSound(false);
-                soundManager.mp_bg.setVolume(musicSlider.getValue());
-                soundManager.muteAmSound(false);
-                soundManager.mp_am.setVolume(ambientSlider.getValue());
-                musicIsEnabled=true;
-            }
-            else{
-                musicIsEnabled=false;
-                soundManager.muteAmSound(true);
-                soundManager.muteBgSound(true);
+            if (ck.isSelected()) {
+                soundManager.bgMusicPlayer.setCurrentVolume(musicSlider.getValue());
+                soundManager.amMusicPlayer.setCurrentVolume(ambientSlider.getValue());
+                soundManager.bgMusicPlayer.unmutePlayer();
+                soundManager.amMusicPlayer.unmutePlayer();
+                musicIsEnabled = true;
+                soundManager.setMusicEnabled(musicIsEnabled);
+            } else {
+                musicIsEnabled = false;
+                soundManager.setMusicEnabled(musicIsEnabled);
+                soundManager.bgMusicPlayer.mutePlayer();
+                soundManager.amMusicPlayer.mutePlayer();
             }
         });
         musicSlider.valueProperty().addListener((Observable observable) -> {
-            soundManager.mp_bg.setVolume(musicSlider.getValue());
+            soundManager.bgMusicPlayer.setCurrentVolume(musicSlider.getValue());
+            soundManager.bgMusicPlayer.setVolumePlayer(musicSlider.getValue());
         });
         ambientSlider.valueProperty().addListener((Observable observable) -> {
-            soundManager.mp_am.setVolume(ambientSlider.getValue());
+            soundManager.amMusicPlayer.setVolumePlayer(ambientSlider.getValue());
+            soundManager.amMusicPlayer.setCurrentVolume(ambientSlider.getValue());
         });
 
         optionsDefaultButton.setOnAction((ActionEvent) -> {
@@ -252,12 +254,17 @@ public class SplashLevel extends Scene implements ILevel {
             optionsDefaultButton.setDisable(false);
         });
 
-        optionsPane.getChildren().addAll(optionsDefaultButton,optionsWASDButton,
-                soundLabel,ck,musicLabel,musicSlider,sepHor,ambianceVolumeLabel,ambientSlider);
+        optionsPane.getChildren().addAll(optionsDefaultButton, optionsWASDButton,
+                soundLabel, ck, musicLabel, musicSlider, sepHor, ambianceVolumeLabel, ambientSlider);
         return optionsPane;
     }
 
-    public void createMenuButtons(){
+
+    public CheckBox getCk() {
+        return ck;
+    }
+
+    public void createMenuButtons() {
         startButton = new Button("Play");
         startButton.setPrefSize(180, 20);
         startButton.setMaxWidth(Double.MAX_VALUE);
@@ -270,59 +277,68 @@ public class SplashLevel extends Scene implements ILevel {
         scoresButton = new Button("Scores");
         scoresButton.setPrefSize(100, 20);
         scoresButton.setMaxWidth(Double.MAX_VALUE);
-        creditsButton= new Button("Credits");
+        creditsButton = new Button("Credits");
         creditsButton.setPrefSize(100, 20);
         creditsButton.setMaxWidth(Double.MAX_VALUE);
-        exitButton= new Button("Exit");
+        exitButton = new Button("Exit");
         exitButton.setPrefSize(100, 20);
         exitButton.setMaxWidth(Double.MAX_VALUE);
     }
 
-    public HBox createScoresHBox(){
+    public HBox createScoresHBox() {
         HBox scoreBox= new HBox();
-        imgView= new ImageView(scoresLayer);
+        imgView = new ImageView(scoresLayer);
         scoreBox.getChildren().add(imgView);
         scoreBox.setAlignment(Pos.CENTER);
         scoreBox.setMargin(imgView, new Insets(0, 10, 0, 0)); // Center Pane
         return scoreBox;
-        }
+    }
 
-    public HBox createCreditsHBox(){
-        HBox creditsBox= new HBox();
-        imgView= new ImageView(creditsLayer);
+    public HBox createCreditsHBox() {
+        HBox creditsBox = new HBox();
+        imgView = new ImageView(creditsLayer);
         creditsBox.getChildren().add(imgView);
         creditsBox.setAlignment(Pos.CENTER);
         creditsBox.setMargin(imgView, new Insets(0, 10, 0, 0)); // Center Pane
         return creditsBox;
-        }
-    public HBox createInstructHBox(){
-        HBox instructBox= new HBox();
-        imgView= new ImageView(instructionsLayer);
+    }
+
+    public HBox createInstructHBox() {
+        HBox instructBox = new HBox();
+        imgView = new ImageView(instructionsLayer);
         instructBox.getChildren().add(imgView);
         instructBox.setAlignment(Pos.CENTER);
         instructBox.setMargin(imgView, new Insets(0, 10, 0, 0)); // Center Pane
         return instructBox;
-        }
+    }
 
-    public VBox createMenuVBox()
-    {
-        VBox menuButtonVBox= new VBox();//box holding all buttons
+    public HBox createOptionsHBox() {
+        HBox optionsBox = new HBox();
+        grid = createOptionsGridPane();
+        optionsBox.getChildren().add(grid);
+        optionsBox.setAlignment(Pos.CENTER);
+        optionsBox.setMargin(grid, new Insets(0, 10, 0, 0)); // Center Pane
+        return optionsBox;
+    }
+
+    public VBox createMenuVBox() {
+        VBox menuButtonVBox = new VBox();//box holding all buttons
         menuButtonVBox.setSpacing(10);
-        buttonContainerPadding= new Insets(0, 10, 0, 10);
+        buttonContainerPadding = new Insets(0, 10, 0, 10);
         menuButtonVBox.setPadding(buttonContainerPadding);
         menuButtonVBox.setAlignment(Pos.CENTER);
         createMenuButtons();
-        Text title= new Text("Menu");
-        title.setFont(Font.font(selectedFont, FontWeight.BOLD,26));
+        Text title = new Text("Menu");
+        title.setFont(Font.font(selectedFont, FontWeight.BOLD, 26));
         menuButtonVBox.getChildren().add(title);
 
-        menuButtonVBox.getChildren().addAll(startButton, instructionsButton, optionsButton,scoresButton,creditsButton,exitButton);
+        menuButtonVBox.getChildren().addAll(startButton, instructionsButton, optionsButton, scoresButton, creditsButton, exitButton);
         return menuButtonVBox;
     }
 
-    public void addStackPaneLogo(HBox hb){
-        StackPane logoPane= new StackPane();
-        imgView= new ImageView(logo);
+    public void addStackPaneLogo(HBox hb) {
+        StackPane logoPane = new StackPane();
+        imgView = new ImageView(logo);
 
         logoPane.getChildren().addAll(imgView);
         logoPane.setAlignment(Pos.CENTER_LEFT);     // left-justify logo node in stack
@@ -330,9 +346,9 @@ public class SplashLevel extends Scene implements ILevel {
         hb.getChildren().add(logoPane);
     }
 
-    public void addStackPaneInstructions(HBox hb){
-        StackPane instructionnsPane= new StackPane();
-        imgView=new  ImageView(instructionsLayer);
+    public void addStackPaneInstructions(HBox hb) {
+        StackPane instructionnsPane = new StackPane();
+        imgView = new ImageView(instructionsLayer);
 
         instructionnsPane.getChildren().add(imgView);
         StackPane.setAlignment(imgView, Pos.CENTER);
@@ -342,10 +358,10 @@ public class SplashLevel extends Scene implements ILevel {
 
     }
 
-    public void addStackPaneCredits(HBox hb){
-         StackPane creditsPane= new StackPane();
-        imgView=new  ImageView(creditsLayer);
-        MediaView mv= new MediaView();// if we wanted to change it to video
+    public void addStackPaneCredits(HBox hb) {
+        StackPane creditsPane = new StackPane();
+        imgView = new ImageView(creditsLayer);
+        MediaView mv = new MediaView();// if we wanted to change it to video
         creditsPane.getChildren().add(imgView);
         StackPane.setAlignment(imgView, Pos.CENTER);
 
@@ -354,9 +370,9 @@ public class SplashLevel extends Scene implements ILevel {
 
     }
 
-    public void addStackPaneScores(HBox hb){
-        StackPane scoresPane= new StackPane();
-        imgView=new  ImageView(scoresLayer);
+    public void addStackPaneScores(HBox hb) {
+        StackPane scoresPane = new StackPane();
+        imgView = new ImageView(scoresLayer);
 
         scoresPane.getChildren().add(imgView);
         StackPane.setAlignment(imgView, Pos.CENTER);
@@ -366,14 +382,14 @@ public class SplashLevel extends Scene implements ILevel {
 
     }
 
-    public void addStackPaneExit(HBox hb){
+    public void addStackPaneExit(HBox hb) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
 
         alert.setContentText("Are you sure you want to exit the game?");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             // ... user chose OK
             System.exit(0);
         } else {
@@ -381,24 +397,23 @@ public class SplashLevel extends Scene implements ILevel {
         }
     }
 
-    public HBox addHBox(){
-        HBox hb= new HBox();
-        hb.setPadding(new Insets(15,0,15,15));
+    public HBox addHBox() {
+        HBox hb = new HBox();
+        hb.setPadding(new Insets(15, 0, 15, 15));
         hb.setSpacing(0);
         hb.setMaxHeight(15);
         return hb;
     }
 
-    public void addStackPaneCopyRight(HBox hb){
-        StackPane copyrightPane= new StackPane();
-        imgView= new ImageView(copyright);
+    public void addStackPaneCopyRight(HBox hb) {
+        StackPane copyrightPane = new StackPane();
+        imgView = new ImageView(copyright);
 
         copyrightPane.getChildren().addAll(imgView);
         copyrightPane.setAlignment(Pos.CENTER);     // center copyright node in stack
         hb.getChildren().add(copyrightPane);
 
     }
-
 
     @Override
     public boolean isDone() {

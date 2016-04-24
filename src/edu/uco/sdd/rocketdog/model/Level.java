@@ -2,26 +2,26 @@ package edu.uco.sdd.rocketdog.model;
 
 import edu.uco.sdd.rocketdog.commands.RocketDogController;
 import edu.uco.sdd.rocketdog.controller.KeyMappingContext;
-import edu.uco.sdd.rocketdog.model.Animations.SpitzDeadAnimateStrategy;
+import edu.uco.sdd.rocketdog.view.GameOver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.Node;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.scene.layout.StackPane;
+
 
 public class Level extends Scene implements Observer, ILevel {
 
-    public SoundManager s;
+    public SoundManager soundManager;
     public RocketDog rocketDog;
     protected RocketDogController rocketDogController; //RocketDog's controller
     public Group backgroundGroup;
@@ -47,7 +47,7 @@ public class Level extends Scene implements Observer, ILevel {
     //final private LaserWeapon weapon;
     final public ArrayList<LargeLaserAttack> largeWeapon;
     protected Group viewportGroup;
-
+    private MenuItem menu;
 
     public Level(Group root, int width, int height) {
         this(root, new ImageView(), width, height);
@@ -79,7 +79,8 @@ public class Level extends Scene implements Observer, ILevel {
         largeWeapon = new ArrayList();
         surfaces = new ArrayList<>();
         rocketDogController = new RocketDogController(rocketDog, this.root, this.root, 5, 0, 1000, width, height);
-
+        menu = new MenuItem();
+        
         //Background Added to game
         root.getChildren().add(background);
         //root.setAlignment(Pos.TOP_LEFT);
@@ -90,7 +91,7 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.getHitbox().setWidth(130);
         rocketDog.getHitbox().setHeight(130);
         rocketDog.setLevel(this);
-        rocketDog.setCurrentHealth(10000);
+        rocketDog.setCurrentHealth(100);
 
         //Invisible obstruction on screen border
         //addObstruction(new Obstruction(new Point2D(0,0)),width, 1);
@@ -128,7 +129,17 @@ public class Level extends Scene implements Observer, ILevel {
         update(rocketDog.getCurrentHealth());
         scoreText.setText("Score : " + rocketDog.getScore() + "                 Health: " + rocketDog.getCurrentHealth());
         scoreText.setFont(new Font(20));
-
+        
+        menu.displayMenu(false);
+        menu.displayHsd(false);
+        menu.getHsd().getBackButton().setOnAction((ActionEvent) -> {
+            menu.displayMenu(true);
+            menu.displayHsd(false);
+        });
+        viewportItems.getChildren().add(menu.getHsd().getScoresPane());
+        viewportItems.getChildren().add(menu.getCd().getCreditsPane());
+        viewportItems.getChildren().add(rocketDog.getGameover().getGameOVerPane());
+        viewportItems.getChildren().add(getMainMenu());
 
     }
 
@@ -166,7 +177,20 @@ public class Level extends Scene implements Observer, ILevel {
         entities.addAll(getEnemies());
         return entities;
     }
+    public StackPane getMainMenu(){
+        return menu.getMenupane();
+    }
 
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+    
+    public MenuItem getMenu(){
+        return menu;
+    }
+    public StackPane getHsdPane(){
+        return this.menu.hsd.getScoresPane();
+    }
     public void addEnemy(Enemy enemy, double width, double height) {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
@@ -430,9 +454,9 @@ public class Level extends Scene implements Observer, ILevel {
 
          this.setOnKeyReleased((KeyEvent event) -> {
          keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
-         });*/
-        /*this.setOnKeyPressed((KeyEvent event) -> {
-         switch (event.getCode()) {
+         });
+        this.setOnKeyPressed((KeyEvent event) -> {
+            switch (event.getCode()) {
          case LEFT:
          gameController.moveLeftButton();
          break;
@@ -448,10 +472,8 @@ public class Level extends Scene implements Observer, ILevel {
          case SPACE:
          gameController.shootButton(backgroundGroup);
          break;
-         case H:
-         setVisibleHitBoxes(!getVisibleHitBoxes());
-         }
-         });*/
+        }
+        });*/
     }
 
     @Override
@@ -469,7 +491,7 @@ public class Level extends Scene implements Observer, ILevel {
         if (rocketDog.getPosition().getX() > 500 && rocketDog.getLuckAttribute() > 1 && Math.random() > 0.9991) {
             this.addAidItem(new HealthItem(new Point2D(100, 1)), 56, 56);
         }
-
+        
         //Set rocketDog hitbox visibility
         rocketDog.getHitbox().setVisible(visibleHitBoxes);
         rocketDog.getHealthText().setVisible(visibleHitBoxes);
@@ -480,7 +502,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-            if (laser.getPosition().getX() > root.minWidth(500)|| laser.getPosition().getX() < 0) {
+            if (laser.getPosition().getX() > root.minWidth(500) || laser.getPosition().getX() < 0) {
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -489,18 +511,19 @@ public class Level extends Scene implements Observer, ILevel {
             laser.update();
             laser.getHitbox().setVisible(visibleHitBoxes);
 
-            for(int i = 0; i < enemies.size(); i++){
-                if (laser.hasCollided(enemies.get(i))){
-                laser.setPos(0, -45);
-                laser.setDead(false);
-                laser.setVisableOff();
-                laser.setVel(0, 0);
-                rocketDog.setScore(rocketDog.getScore() + 20);
-                update(rocketDog.getScore());
-                enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 2);
-                update(enemies.get(i).getCurrentHealth());
-                if(enemies.get(i).currentHealth <= 0)
-                    removeEnemy(enemies.get(i));
+            for (int i = 0; i < enemies.size(); i++) {
+                if (laser.hasCollided(enemies.get(i))) {
+                    laser.setPos(0, -45);
+                    laser.setDead(false);
+                    laser.setVisableOff();
+                    laser.setVel(0, 0);
+                    rocketDog.setScore(rocketDog.getScore() + 20);
+                    update(rocketDog.getScore());
+                    enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 2);
+                    update(enemies.get(i).getCurrentHealth());
+                    if (enemies.get(i).currentHealth <= 0) {
+                        removeEnemy(enemies.get(i));
+                    }
                 }
             }
         });
@@ -519,8 +542,8 @@ public class Level extends Scene implements Observer, ILevel {
             largeLaser.update();
             largeLaser.getHitbox().setVisible(visibleHitBoxes);
 
-            for(int i = 0; i < enemies.size(); i++){
-                if (largeLaser.hasCollided(enemies.get(i))){
+            for (int i = 0; i < enemies.size(); i++) {
+                if (largeLaser.hasCollided(enemies.get(i))) {
                     largeLaser.setPos(0, -150);
                     largeLaser.setDead(false);
                     largeLaser.setVisableOff();
@@ -529,8 +552,9 @@ public class Level extends Scene implements Observer, ILevel {
                     update(rocketDog.getScore());
                     enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 5);
                     update(enemies.get(i).getCurrentHealth());
-                    if(enemies.get(i).currentHealth <= 0)
+                    if (enemies.get(i).currentHealth <= 0) {
                         removeEnemy(enemies.get(i));
+                    }
                 }
             }
         });

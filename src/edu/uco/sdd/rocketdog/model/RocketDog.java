@@ -3,6 +3,10 @@ package edu.uco.sdd.rocketdog.model;
 import edu.uco.sdd.rocketdog.model.Animations.IAnimateStrategy;
 import edu.uco.sdd.rocketdog.model.Animations.SpitzDeadAnimateStrategy;
 import edu.uco.sdd.rocketdog.model.Animations.SpitzIdleAnimateStrategy;
+import edu.uco.sdd.rocketdog.view.GameOver;
+import edu.uco.sdd.rocketdog.view.HighScoreDisplay;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -24,8 +28,12 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
     private int currentScore;
     public int count1 = 0, count2 = 0;
     private boolean moving = false;
+    private HighScoreDisplay hsd;
+    private GameOver gameover;
 
     private double horzSpeed, vertSpeed;
+    private boolean isTaskCompleted;
+    private TimerTask task;
 
     public RocketDog() {
         super();
@@ -44,9 +52,14 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         this.healthText = new Text(0, 20, Double.toString(super.getCurrentHealth()));
         this.healthText.setFont(new Font(20));
         this.healthText.setStroke(Color.GREEN);
-
+        this.hsd= new HighScoreDisplay();
+        this.gameover= new GameOver();
         getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
         getHitbox().setOffsetY(20);
+    }
+
+    public GameOver getGameover() {
+        return gameover;
     }
 
     @Override
@@ -96,6 +109,21 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         if (this.getCurrentHealth() <= 0 && !this.isDead()) {
             this.setDead(true);
             setAnimation(new SpitzDeadAnimateStrategy());
+            this.gameover.showGameOVerPane();
+            isTaskCompleted = false;
+            Timer timer = new Timer();
+            task=new TimerTask() {
+            @Override
+            public void run() {
+                hsd.getHs().addNewScore(getScore());
+                isTaskCompleted = true;
+                timer.cancel();
+                timer.purge();
+                }
+        };
+            timer.schedule(task, 2000);
+        //
+        //
         }
 
         /**
@@ -207,6 +235,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
             if (this.currentHealth <= 0) {
                 this.setDead(true);
                 this.setAnimation(new SpitzDeadAnimateStrategy());
+                this.hsd.getHs().addNewScore(this.currentScore);
             }
         }
     }

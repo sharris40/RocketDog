@@ -9,22 +9,15 @@ import javafx.scene.text.Text;
 
 public class LevelOne extends Level {
 
-    Text t;
     ImageView bg;
     Group root;
     Group houses;
-    public SoundManager soundManager = new SoundManager();
-
-    public LevelOne(Group root, ImageView background, int width, int height, SoundManager soundManager) {
+    
+    public LevelOne(Group root, ImageView background, int width, int height,SoundManager soundManager) {
         super(root, background, width, height);
-        t = new Text();
-        this.soundManager = soundManager;
-        soundManager.resetMediaPlayer(this.soundManager.getMp_bg(), "ambienthorror.mp3");
-        soundManager.mp_bg.setVolume(0.05);
-        soundManager.mp_bg.setCycleCount(100);
-        soundManager.mp_am.setMute(true);
         this.root = root; // Need a handle to root to add images
-
+        this.soundManager= soundManager;
+        soundManager.startGameMusicForLevel(1);
         bg = (ImageView) root.getChildren().get(0); // Need a handle to bg to scroll
 
         addHouses();
@@ -74,14 +67,7 @@ public class LevelOne extends Level {
      * +---+---+---+---+ +---|---|---|---| +---|---|---|---| +---+---+---+---+
      *
      */
-    private void loadMusic() {
-        SoundManager soundManager = new SoundManager();
-        soundManager.setMp_bg(soundManager.createMediaPlayer("bgmusic.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_bg(), 0.1);
-        soundManager.setMp_am(soundManager.createMediaPlayer("forest.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_am(), 0.1);
-    }
-
+    
     public void positionScreen() {
         RocketDog rd = this.getRocketDog();
         double width = RocketDogGame.GAME_SCREEN_WIDTH;
