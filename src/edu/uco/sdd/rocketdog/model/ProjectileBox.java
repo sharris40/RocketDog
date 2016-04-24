@@ -5,9 +5,9 @@
  *
  * Level.java contains an ArrayList to hold all of the ActiveAidItems
  * and ActiveAidItems should be implemented in that class
- * 
+ *
  * NOTE: an ActiveAidItem is what you get after you "pickup" an AidItem
- * so generally an instance of one of these is created after processColission() 
+ * so generally an instance of one of these is created after processColission()
  * returns true for one of the AidItems on the screen.
  */
 package edu.uco.sdd.rocketdog.model;
@@ -37,7 +37,7 @@ public class ProjectileBox extends TangibleEntity implements IAnimateStrategy, A
     private static final double GRAVITY_ACCELERATION = 1.6;
     private static final int COMPENSATE_FOR_FPS = 60;
     private static final int DAMAGE = 500;
-    
+
     public ProjectileBox(TangibleEntity t, IAnimateStrategy animate, Group group){
         super();
         this.te = t;
@@ -48,25 +48,25 @@ public class ProjectileBox extends TangibleEntity implements IAnimateStrategy, A
         setDead(false);
         getHitbox().setWidth(150);
         getHitbox().setHeight(150);
-        getHitbox().setTranslateX(-100);
-        getHitbox().setTranslateY(1000);
+        getHitbox().setLayoutX(-100);
+        getHitbox().setLayoutY(1000);
 
         this.group = group;
         explosion = new Explosion(new ExplosionAnimateStrategy());
         group.getChildren().add(explosion.getSprite());
-        explosion.getSprite().setTranslateY(-300);
+        explosion.getSprite().setLayoutY(-300);
         explosion.setDead(true);
     }
-    
+
     public void update(){
         if(!this.isDead()){
             duration++;
 
-            getSprite().setTranslateX(getSprite().getTranslateX() - (newDisplacementX));
-            getSprite().setTranslateY(getSprite().getTranslateY() - (newDisplacementY));
+            getSprite().setLayoutX(getSprite().getLayoutX() - (newDisplacementX));
+            getSprite().setLayoutY(getSprite().getLayoutY() - (newDisplacementY));
             setNextYDisplacement(); // set next velocity
-            getHitbox().setTranslateX(getSprite().getTranslateX());
-            getHitbox().setTranslateY(getSprite().getTranslateY());
+            getHitbox().setLayoutX(getSprite().getLayoutX());
+            getHitbox().setLayoutY(getSprite().getLayoutY());
             getSprite().setViewport(animating.getCurrentView());
             handle(); // Animations
         } else {
@@ -77,22 +77,22 @@ public class ProjectileBox extends TangibleEntity implements IAnimateStrategy, A
             duration = 0;
         }
 
-        
+
         if (explosion.isDead()){
            removeExplosion();
         } else {
             explosion.update();
         }
-        
+
     }
-    
+
     public void setAnimation(IAnimateStrategy newAnimation) {
         animating = newAnimation;
         getSprite().setImage(animating.getImage());
         //getSprite().setTranslateX(getPosition().getX());
         //getSprite().setTranslateY(getPosition().getY());
     }
-    
+
     @Override
     public void processCollision(TangibleEntity te){
         super.processCollision(te);
@@ -109,20 +109,20 @@ public class ProjectileBox extends TangibleEntity implements IAnimateStrategy, A
         newDisplacementY = ((boxVelocityY * duration) - (.5 * GRAVITY_ACCELERATION * (duration * duration))) / COMPENSATE_FOR_FPS;
         newDisplacementX = boxVelocityX / 4.5; //COMPENSATE_FOR_FPS;
     }
-    
-    
+
+
     public void attack(TangibleEntity tangibleEntity){
-        te.setCurrentHealth(getCurrentHealth() - DAMAGE);
+        tangibleEntity.setCurrentHealth(tangibleEntity.getCurrentHealth() - DAMAGE);
     }
 
     public void addExplosion(){
         explosion.setDead(false);
-        explosion.getSprite().setTranslateX(this.getSprite().getTranslateX()-100);
-        explosion.getSprite().setTranslateY(this.getSprite().getTranslateY()-100);
+        explosion.getSprite().setLayoutX(this.getSprite().getLayoutX()-100);
+        explosion.getSprite().setLayoutY(this.getSprite().getLayoutY()-100);
     }
 
     public void removeExplosion(){
-        explosion.getSprite().setTranslateY(-300);
+        explosion.getSprite().setLayoutY(-300);
     }
 
     public void updateExplosion(){
@@ -183,5 +183,5 @@ public class ProjectileBox extends TangibleEntity implements IAnimateStrategy, A
     public void setGroup(Group group) {
         this.group = group;
     }
-    
+
 }

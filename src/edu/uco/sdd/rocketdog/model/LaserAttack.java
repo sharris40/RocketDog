@@ -19,7 +19,7 @@ import javafx.scene.image.ImageView;
 
 /* This class will later be edited to be a builder
  This will allow for several laser bullets on the screen at a time
- However we can restrict the total number on the screen at a time. 
+ However we can restrict the total number on the screen at a time.
  */
 public class LaserAttack extends TangibleEntity implements IAnimateStrategy {
 
@@ -76,6 +76,21 @@ public class LaserAttack extends TangibleEntity implements IAnimateStrategy {
 
     public void setVisableOff() {
         getSprite().setVisible(false);
+    }
+
+    @Override
+    public double getCurrentHealth() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealth(double currentHealth) {
+        if (currentHealth < 0) {
+            this.setPos(0, -45);
+            this.setDead(false);
+            this.setVisableOff();
+            this.setVel(0, 0);
+        }
     }
 
 }

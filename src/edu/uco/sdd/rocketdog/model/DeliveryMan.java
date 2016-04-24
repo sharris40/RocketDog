@@ -59,9 +59,7 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         setPosition(new Point2D(x,y));
         setSprite(new ImageView(animating.getImage()));
         getSprite().setViewport(animating.getCurrentView());
-        getSprite().setTranslateX(x);
         getSprite().setLayoutX(x);
-        getSprite().setTranslateX(y);
         getSprite().setLayoutY(y);
         random = new Random();
         this.group = group;
@@ -76,7 +74,7 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         getSprite().setLayoutY(y);
         getHitbox().setLayoutX(x);
         getHitbox().setLayoutY(x);
- 
+
         this.setMultiHibox(true);
         hitboxes = new ArrayList();
         Hitbox hitbox = new Hitbox(this.getPosition().getX(), this.getPosition().getY());
@@ -108,7 +106,7 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
 
     @Override
     public void update(){
-        
+
 
         count++;
         if (count >= FIRE_RATE){
@@ -122,8 +120,10 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         setPosition(new Point2D(getPosition().getX(),getPosition().getY()));
         if (getLevel().getRocketDog().getPosition().getX() > this.getPosition().getX()){
             getSprite().setScaleX(-1);
+            hitboxes.get(hitboxes.size() - 1).setOffsetX(10);
         } else {
             getSprite().setScaleX(1);
+            hitboxes.get(hitboxes.size() - 1).setOffsetX(250);
         }
         getSprite().setLayoutX(getPosition().getX());
         getSprite().setLayoutY(getPosition().getY());
@@ -140,21 +140,21 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         });
 
         projectiles.forEach((projectile) -> {
-            if (!projectile.isDead()){
                 projectile.update();
+            if (!projectile.isDead()){
                 projectile.processCollision(rocketDog);
+                getLevel().getLaserAttacks().forEach(weapon -> {projectile.processCollision(weapon);});
+                getLevel().getLargeLaserAttacks().forEach(weapon -> {projectile.processCollision(weapon);});
                 projectile.getHitbox().setVisible(getLevel().getVisibleHitBoxes());
-                if (projectile.getSprite().getTranslateY() > 924){
+                if (projectile.getSprite().getLayoutY() > 924){
                     projectile.setDead(true);
                     projectile.update();
                 }
-            }
-            if (projectile.isDead()){
-                projectile.update();
-                projectile.getSprite().setTranslateX(-100);
-                projectile.getSprite().setTranslateY(1000);
-                projectile.getHitbox().setTranslateX(-200);
-                projectile.getHitbox().setTranslateY(-200);
+            } else {
+                projectile.getSprite().setLayoutX(-100);
+                projectile.getSprite().setLayoutY(1000);
+                projectile.getHitbox().setLayoutX(-200);
+                projectile.getHitbox().setLayoutY(-200);
             }
         });
 
@@ -197,8 +197,8 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
             if (n > boxCount) n = 0;
 
             projectiles.get(n).setDead(false);
-            projectiles.get(n).getSprite().setTranslateX(getSprite().getTranslateX() + 100);
-            projectiles.get(n).getSprite().setTranslateY(getSprite().getTranslateY() + 50);
+            projectiles.get(n).getSprite().setLayoutX(getSprite().getLayoutX() + 100);
+            projectiles.get(n).getSprite().setLayoutY(getSprite().getLayoutY() + 50);
             projectiles.get(n).setBoxVelocityY(calculateVelocityY());
             projectiles.get(n).setBoxVelocityX(calculateVelocityX());
 
@@ -279,8 +279,8 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
     public void setAnimation(IAnimateStrategy newAnimation) {
         animating = newAnimation;
         getSprite().setImage(animating.getImage());
-        getSprite().setTranslateX(getPosition().getX());
-        getSprite().setTranslateY(getPosition().getY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
     }
 
     @Override
@@ -300,6 +300,21 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    @Override
+    public void setCurrentHealth(double health) {
+        super.setCurrentHealth(health);
+        if (health <= 0) {
+
+            projectiles.forEach((projectile) -> {
+                projectile.getSprite().setLayoutX(-100);
+                projectile.getSprite().setLayoutY(1000);
+                projectile.getHitbox().setLayoutX(-200);
+                projectile.getHitbox().setLayoutY(-200);
+                projectile.removeExplosion();
+            });
+        }
     }
 
 

@@ -42,7 +42,7 @@ public class RocketDogController {
      * @param levelHeight maximum y coordinate of level
      */
 
-    public RocketDogController(TangibleEntity tangibleEntity, 
+    public RocketDogController(TangibleEntity tangibleEntity,
             Group topLevelGroup, Group shootGroup,
             int focalSpeed, int viewportMinX, int viewportMaxX, int levelWidth,
             int levelHeight) {
@@ -117,7 +117,7 @@ public class RocketDogController {
         /**
          * background has negative coordinates possibly, but we are adding bullet
          * with coordinates from tangibleEntity, need to subtract out the negative
-         * coordinates of the Group that we're adding the bullet to. 
+         * coordinates of the Group that we're adding the bullet to.
          */
         //shoot = new ShootRight(maxX + Math.abs(shootgroup.getTranslateX()),midY,currentLevel);
         shoot = new ShootRight(currentLevel, k);

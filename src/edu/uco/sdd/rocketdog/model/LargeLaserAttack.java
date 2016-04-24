@@ -72,4 +72,19 @@ public class LargeLaserAttack extends TangibleEntity implements IAnimateStrategy
     public void setVisableOff() {
         getSprite().setVisible(false);
     }
+
+    @Override
+    public double getCurrentHealth() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealth(double currentHealth) {
+        if (currentHealth < 0) {
+            this.setPos(0, -150);
+            this.setDead(false);
+            this.setVisableOff();
+            this.setVel(0, 0);
+        }
+    }
 }

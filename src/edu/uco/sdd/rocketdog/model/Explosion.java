@@ -5,9 +5,9 @@
  *
  * Level.java contains an ArrayList to hold all of the ActiveAidItems
  * and ActiveAidItems should be implemented in that class
- * 
+ *
  * NOTE: an ActiveAidItem is what you get after you "pickup" an AidItem
- * so generally an instance of one of these is created after processColission() 
+ * so generally an instance of one of these is created after processColission()
  * returns true for one of the AidItems on the screen.
  */
 package edu.uco.sdd.rocketdog.model;
@@ -25,7 +25,7 @@ import javafx.scene.image.ImageView;
 public class Explosion extends TangibleEntity implements IAnimateStrategy {
     private IAnimateStrategy animating;
     private int duration;
-    
+
     public Explosion(IAnimateStrategy animate){
         super();
         this.animating = animate;
@@ -33,19 +33,19 @@ public class Explosion extends TangibleEntity implements IAnimateStrategy {
         getSprite().setViewport(animating.getCurrentView());
         duration = 0;
     }
-    
+
     public void update(){
         duration++;
         if (duration > 48) {
             this.setDead(true);
             duration = 0;
-            this.getSprite().setTranslateY(-300);
+            this.getSprite().setLayoutY(-300);
         } else {
             getSprite().setViewport(animating.getCurrentView());
             handle();
         }
     }
-    
+
     public void setAnimation(IAnimateStrategy newAnimation) {
         animating = newAnimation;
         getSprite().setImage(animating.getImage());
@@ -71,5 +71,5 @@ public class Explosion extends TangibleEntity implements IAnimateStrategy {
 
     public void setAnimating(IAnimateStrategy animating) {
         this.animating = animating;
-    }    
+    }
 }
