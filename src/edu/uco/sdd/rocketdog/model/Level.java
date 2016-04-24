@@ -521,11 +521,7 @@ public class Level extends Scene implements Observer, ILevel {
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-<<<<<<< HEAD
-            if (laser.getPosition().getX() > root.minWidth(500) || laser.getPosition().getX() < 0) {
-=======
             if(laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0){
->>>>>>> 3192837b90f708e517d0fe230bf8a10599af17ca
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -534,7 +530,7 @@ public class Level extends Scene implements Observer, ILevel {
             laser.update();
             laser.getHitbox().setVisible(visibleHitBoxes);
 
-<<<<<<< HEAD
+
             for (int i = 0; i < enemies.size(); i++) {
                 if (laser.hasCollided(enemies.get(i))) {
                     laser.setPos(0, -45);
@@ -548,21 +544,6 @@ public class Level extends Scene implements Observer, ILevel {
                     if (enemies.get(i).currentHealth <= 0) {
                         removeEnemy(enemies.get(i));
                     }
-=======
-            for(int i = 0; i < enemies.size(); i++){
-
-                if (laser.hasCollided(enemies.get(i))){
-                laser.setPos(0, -45);
-                laser.setDead(false);
-                laser.setVisableOff();
-                laser.setVel(0, 0);
-                rocketDog.setScore(rocketDog.getScore() + 20);
-                update(rocketDog.getScore());
-                enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 2);
-                update(enemies.get(i).getCurrentHealth());
-                if(enemies.get(i).currentHealth <= 0)
-                    removeEnemy(enemies.get(i));
->>>>>>> 3192837b90f708e517d0fe230bf8a10599af17ca
                 }
             }
         });
