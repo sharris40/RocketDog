@@ -60,6 +60,15 @@ public class PatrolController extends AccelerationController {
     super(entity);
   }
 
+    private boolean positionBlocked(Bounds bounds) {
+        Bounds modifiedBounds = new BoundingBox(bounds.getMinX() + 4, bounds.getMinY() + 4, bounds.getWidth() - 8, bounds.getHeight() - 8);
+        return    controlledObject.getLevel().getObstructions().stream().anyMatch((obstruction) -> (
+                    modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())
+            )) || controlledObject.getLevel().getHazards().stream().anyMatch((hazard) -> (
+                    modifiedBounds.intersects(hazard.getHitbox().getBoundsInParent()))
+            );
+    }
+
   @Override
   public boolean process(Map<Entity, Boolean> changedEntities) {
     Point2D newAccel = new Point2D(0, 0);
@@ -143,13 +152,11 @@ public class PatrolController extends AccelerationController {
         Point2D veltemp = controlledObject.getVelocity();
         Bounds controlledBounds = new BoundingBox(cbtemp.getMinX() + veltemp.getX(), cbtemp.getMinY() + veltemp.getY(), cbtemp.getWidth(), cbtemp.getHeight());
 
-        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
-            if (controlledBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
-                controlledObject.removeController(this);
-                ObjectTraverseController newController = new ObjectTraverseController(controlledObject, obstruction, this, veltemp, new Point2D(0, 0));
-                controlledObject.addController(newController);
-                return newController.process(changedEntities);
-            }
+        if (positionBlocked(controlledBounds)) {
+            controlledObject.removeController(this);
+            ObjectTraverseController newController = new ObjectTraverseController(controlledObject, this, veltemp, new Point2D(0, 0));
+            controlledObject.addController(newController);
+            return newController.process(changedEntities);
         }
     }
     return true;

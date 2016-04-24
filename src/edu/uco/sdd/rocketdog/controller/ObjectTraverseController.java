@@ -1,37 +1,38 @@
 package edu.uco.sdd.rocketdog.controller;
 
+import edu.uco.sdd.rocketdog.astar.Node;
+import edu.uco.sdd.rocketdog.astar.OrderedNodeMap;
+import edu.uco.sdd.rocketdog.astar.Point;
 import edu.uco.sdd.rocketdog.model.Entity;
 import edu.uco.sdd.rocketdog.model.Obstruction;
 import edu.uco.sdd.rocketdog.model.TangibleEntity;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class ObjectTraverseController extends AccelerationController {
 
-    private Obstruction target;
     private MovementController next;
     private Point2D nextVelocity, nextAcceleration, destPoint, lastPosition;
-    private final LinkedList<Point2D> path;
+    private List<Point2D> path;
 
-    public ObjectTraverseController(TangibleEntity entity, Obstruction target, MovementController nextController, Point2D nextVelocity, Point2D nextAcceleration) {
+    public ObjectTraverseController(TangibleEntity entity, MovementController nextController, Point2D nextVelocity, Point2D nextAcceleration) {
         super(entity);
-        this.target = target;
         this.next = nextController;
         this.nextVelocity = nextVelocity;
         this.nextAcceleration = nextAcceleration;
         path = new LinkedList<>();
         findPathOut();
-    }
-
-    public Obstruction getTarget() {
-        return target;
-    }
-
-    public void setTarget(Obstruction target) {
-        this.target = target;
     }
 
     public MovementController getNext() {
@@ -58,21 +59,122 @@ public class ObjectTraverseController extends AccelerationController {
         this.nextAcceleration = nextAcceleration;
     }
 
-    /*private boolean isBlockedVertical(Bounds self, Bounds obstacle, Point2D loc, Point2D dest) {
-        Point2D toDest = dest.subtract(loc).normalize();
-        Point2D nextLoc = loc.add(toDest);
-        return !(nextLoc.getY() > obstacle.getMaxY() || nextLoc.getY() + self.getHeight() < obstacle.getMinY());
+    private boolean positionBlocked(Bounds bounds) {
+        Bounds modifiedBounds = new BoundingBox(bounds.getMinX() + 4, bounds.getMinY() + 4, bounds.getWidth() - 8, bounds.getHeight() - 8);
+        return    controlledObject.getLevel().getObstructions().stream().anyMatch((obstruction) -> (
+                    modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())
+            )) || controlledObject.getLevel().getHazards().stream().anyMatch((hazard) -> (
+                    modifiedBounds.intersects(hazard.getHitbox().getBoundsInParent()))
+            );
     }
 
-    private boolean isBlockedHorizontal(Bounds self, Bounds obstacle, Point2D loc, Point2D dest) {
-        Point2D toDest = dest.subtract(loc).normalize();
-        Point2D nextLoc = loc.add(toDest);
-        return !(nextLoc.getX() > obstacle.getMaxX() || nextLoc.getX() + self.getWidth() < obstacle.getMinX());
-    }*/
+    private List<Point2D> getPath(Map<Point, Point> from, Point end) {
+        LinkedList<Point2D> currentPath = new LinkedList<>();
+        currentPath.add(new Point2D(end.getX(), end.getY()));
+        Point current = end;
+        while (from.containsKey(current)) {
+            current = from.get(current);
+            currentPath.addFirst(new Point2D(current.getX(), current.getY()));
+        }
+        return currentPath;
+    }
+
+    private List<Point2D> astar(Point start, double xSpacing, double ySpacing, Point beforeStart) {
+        Point dest = new Point(destPoint, start.getXRange(), start.getYRange());
+        Set<Point> closed = new HashSet<>();
+        Set<Point> open = new HashSet<>();
+        open.add(start);
+        Map<Point, Point> from = new HashMap<>();
+        OrderedNodeMap scoreFromStart = new OrderedNodeMap();
+        scoreFromStart.put(start, 0., 0);
+        OrderedNodeMap totalScore = new OrderedNodeMap();
+        totalScore.put(start, dest.getDistance(start), 0);
+        Point[] nextPoints = new Point[3];
+        double[] nextSpacing = new double[3];
+        while (!open.isEmpty()) {
+            List<Node> nodes = totalScore.getNodeList();
+            Node current = null;
+            for (Node node : nodes) {
+                if (open.contains(node.getLocation())) {
+                    current = node;
+                    break;
+                }
+            }
+            if (current == null)
+                return null;
+            Point previous = from.get(current.getLocation());
+            if (previous == null)
+                previous = beforeStart;
+            if (dest.closeTo(current.getLocation()))
+                return getPath(from, current.getLocation());
+            open.remove(current.getLocation());
+            closed.add(current.getLocation());
+            Point up = current.getLocation().above(ySpacing);
+            Point down = current.getLocation().below(ySpacing);
+            Point left = current.getLocation().left(xSpacing);
+            Point right = current.getLocation().right(xSpacing);
+            if (previous.closeTo(current.getLocation().above(ySpacing))) {
+                nextPoints[0] = down;
+                nextPoints[1] = left;
+                nextPoints[2] = right;
+                nextSpacing[0] = ySpacing;
+                nextSpacing[1] = xSpacing;
+                nextSpacing[2] = xSpacing;
+            } else if (previous.closeTo(current.getLocation().below(ySpacing))) {
+                nextPoints[0] = up;
+                nextPoints[1] = left;
+                nextPoints[2] = right;
+                nextSpacing[0] = ySpacing;
+                nextSpacing[1] = xSpacing;
+                nextSpacing[2] = xSpacing;
+            } else if (previous.closeTo(current.getLocation().left(xSpacing))) {
+                nextPoints[0] = right;
+                nextPoints[1] = up;
+                nextPoints[2] = down;
+                nextSpacing[0] = xSpacing;
+                nextSpacing[1] = ySpacing;
+                nextSpacing[2] = ySpacing;
+            } else {
+                nextPoints[0] = left;
+                nextPoints[1] = up;
+                nextPoints[2] = down;
+                nextSpacing[0] = xSpacing;
+                nextSpacing[1] = ySpacing;
+                nextSpacing[2] = ySpacing;
+            }
+            for (int i = 0; i < 3; ++i) {
+                ListIterator<Node> existingPoint = totalScore.findPosition(nextPoints[i]);
+                if (existingPoint != null)
+                    nextPoints[i] = existingPoint.previous().getLocation();
+                if (!closed.contains(nextPoints[i])) {
+                    if (positionBlocked(new BoundingBox(nextPoints[i].getX(), nextPoints[i].getY(),
+                            controlledObject.getHitbox().getBoundsInParent().getWidth(),
+                            controlledObject.getHitbox().getBoundsInParent().getHeight()))) {
+                        open.remove(nextPoints[i]);
+                        closed.add(nextPoints[i]);
+                    } else {
+                        double currentGuess = nextSpacing[i] + scoreFromStart.get(current.getLocation());
+                        boolean add = true;
+                        if (!open.contains(nextPoints[i])) {
+                            open.add(nextPoints[i]);
+                        } else if (currentGuess >= scoreFromStart.get(nextPoints[i])) {
+                            add = false;
+                        }
+                        if (add) {
+                            from.put(nextPoints[i], current.getLocation());
+                            scoreFromStart.put(nextPoints[i], currentGuess, i);
+                            double score = currentGuess + dest.getDistance(nextPoints[i]);
+                            totalScore.put(nextPoints[i], currentGuess + dest.getDistance(nextPoints[i]), i);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     private void findPathOut() {
         Bounds cbtemp = controlledObject.getHitbox().getBoundsInParent(),
-                targetBounds = target.getHitbox().getBoundsInParent(),
                 controlledBounds;
         double x = cbtemp.getMinX(), y = cbtemp.getMinY(), width = cbtemp.getWidth(), height = cbtemp.getHeight();
         Point2D velAdd = new Point2D(nextVelocity.getX(), nextVelocity.getY());
@@ -81,61 +183,29 @@ public class ObjectTraverseController extends AccelerationController {
             y += velAdd.getY();
             controlledBounds = new BoundingBox(x, y, width, height);
             velAdd = velAdd.add(nextAcceleration);
-        } while (controlledBounds.intersects(target.getHitbox().getBoundsInParent()));
+        } while (positionBlocked(controlledBounds));
         destPoint = new Point2D(x, y);
-        boolean blockedUp = true, blockedDown = true, blockedLeft = true, blockedRight = true;
-        if (cbtemp.getMinX()  > targetBounds.getMaxX() || cbtemp.getMaxX() < targetBounds.getMinX()) {
-            blockedUp = false;
-            blockedDown = false;
-        } else if (nextVelocity.getY() > 0) { // moving down
-            blockedUp = false;
-        } else {
-            blockedDown = false;
-        }
-        if (cbtemp.getMinY() > targetBounds.getMaxY() || cbtemp.getMaxY() < targetBounds.getMinY()) {
-            blockedLeft = false;
-            blockedRight = false;
-        } else if (nextVelocity.getX() > 0) { // moving right
-            blockedLeft = false;
-        } else {
-            blockedRight = false;
-        }
-        if (blockedUp || blockedDown) {
-            // check left first
-            Point2D pointLeft1 = new Point2D(targetBounds.getMinX() - cbtemp.getWidth(), cbtemp.getMinY());
-            Point2D pointLeft2 = new Point2D(pointLeft1.getX(), destPoint.getY());
-            // check right first
-            Point2D pointRight1 = new Point2D(targetBounds.getMaxX(), cbtemp.getMinY());
-            Point2D pointRight2 = new Point2D(pointRight1.getX(), destPoint.getY());
-            double distLeft = destPoint.getX() - pointLeft2.getX() + Math.abs(pointLeft2.getY() - pointLeft1.getY()) + cbtemp.getMinX() - pointLeft1.getX();
-            double distRight = pointRight2.getX() - destPoint.getX() + Math.abs(pointRight2.getY() - pointRight1.getY()) + pointRight1.getX() - cbtemp.getMinX();
-            if (distLeft < distRight) {
-                path.add(pointLeft1);
-                path.add(pointLeft2);
-                path.add(destPoint);
+        Point start = new Point(Math.round(cbtemp.getMinX()), Math.round(cbtemp.getMinY()));
+        start.setXRange(cbtemp.getWidth() / 4.);
+        start.setYRange(cbtemp.getHeight() / 4.);
+        double xRange = cbtemp.getWidth() / 4. + 2;
+        double yRange = cbtemp.getHeight() / 4. + 2;
+        Point previous;
+        if (Math.abs(nextVelocity.getY()) > Math.abs(nextVelocity.getX())) {
+            if (nextVelocity.getY() > 0) {
+                previous = start.above((yRange < 8) ? 8. : yRange);
             } else {
-                path.add(pointRight1);
-                path.add(pointRight2);
+                previous = start.below((yRange < 8) ? 8. : yRange);
             }
-        } else if (blockedLeft || blockedRight) {
-            // check up first
-            Point2D pointUp1 = new Point2D(cbtemp.getMinX(), targetBounds.getMinY() - cbtemp.getHeight());
-            Point2D pointUp2 = new Point2D(destPoint.getX(), pointUp1.getY());
-            // check down first
-            Point2D pointDown1 = new Point2D(cbtemp.getMinX(), targetBounds.getMaxY());
-            Point2D pointDown2 = new Point2D(destPoint.getX(), pointDown1.getY());
-            double distUp = destPoint.getY() - pointUp2.getY() + Math.abs(pointUp2.getX() - pointUp1.getX()) + cbtemp.getMinY() - pointUp1.getY();
-            double distDown = pointDown2.getY() - destPoint.getY() + Math.abs(pointDown2.getX() - pointDown1.getX()) + pointDown1.getY() - cbtemp.getMinY();
-            if (distUp < distDown) {
-                path.add(pointUp1);
-                path.add(pointUp2);
-                path.add(destPoint);
+        } else {
+            if (nextVelocity.getX() > 0) {
+                previous = start.left((xRange < 8) ? 8. : xRange);
             } else {
-                path.add(pointDown1);
-                path.add(pointDown2);
+                previous = start.right((xRange < 8) ? 8. : xRange);
             }
+
         }
-        path.add(destPoint);
+        path = astar(start, (xRange < 8) ? 8. : xRange, (yRange < 8) ? 8. : yRange, previous);
         lastPosition = controlledObject.getPosition();
     }
 
@@ -143,6 +213,10 @@ public class ObjectTraverseController extends AccelerationController {
     public boolean process(Map<Entity, Boolean> changedEntities) {
         Point2D newPosition = controlledObject.getPosition();
         boolean nextPoint = false;
+        if (path == null) {  // Oh no; stuck in a wall
+            path = new LinkedList<>();
+            path.add(destPoint);
+        }
         Point2D vNew = newPosition.subtract(path.get(0));
         Point2D vOld = lastPosition.subtract(path.get(0));
         if (vNew.magnitude() < 0.25) {
@@ -157,7 +231,7 @@ public class ObjectTraverseController extends AccelerationController {
             nextPoint = true;
         }
         if (nextPoint)
-            path.remove();
+            path.remove(0);
         if (path.isEmpty()) {
             double addWidth = controlledObject.getHitbox().getStrokeWidth() / 2.;
             controlledObject.setPosition(destPoint.add(addWidth, addWidth));

@@ -100,7 +100,7 @@ public class LevelTwo extends Level {
         EntityClass enemy = new EntityClass("Enemy");
         enemy.setRelationship(getPlayer(), EntityClass.Relationship.ENEMY);
         addEnemy(new Enemy.Builder("/Ugly Dog.png", 64, 64).setX(1350).setY(476).setStart(1244).setEnd(1500).setRange(300).setEntityClass(enemy).setLevel(this).build(), 64, 64);
-        addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(1692).setY(224).setStart(50).setEnd(650).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
+        addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(1692).setY(224).setStart(550).setEnd(1750).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
         addEnemy(new DeliveryMan(2000, 400, backgroundGroup), 400, 400);
 
         // Add Viewport + Background to root
