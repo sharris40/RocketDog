@@ -18,7 +18,7 @@ public class SceneFactory {
     public SceneFactory(String level) {
         this.level = level;
         ldr = ImageViewLoader.getInstance();
-        loadMusic();
+        loadSoundManager();
     }
 
     public void setLevel(String level) {
@@ -28,7 +28,7 @@ public class SceneFactory {
     public Scene getLevel() {
         switch (level) {
             case "Splash":
-                return new SplashLevel(new BorderPane(),soundManager);
+                return new SplashLevel(new Group(),soundManager);
             case "One":
                 return new LevelOne(new Group(), ldr.loadImage("/Level 2.png"), GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,soundManager);
             case "Two":
@@ -37,11 +37,7 @@ public class SceneFactory {
                 throw new LevelNotFound(level + " is not valid for getLevel in LevelFactory.java");
         }
     }
-    private void loadMusic(){
+    private void loadSoundManager(){
         soundManager= new SoundManager();
-        soundManager.setMp_bg(soundManager.createMediaPlayer("bgmusic.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_bg(),0.1);
-        soundManager.setMp_am(soundManager.createMediaPlayer("forest.mp3"));
-        soundManager.playMediaPlayer(soundManager.getMp_am(),0.2);
     }
 }

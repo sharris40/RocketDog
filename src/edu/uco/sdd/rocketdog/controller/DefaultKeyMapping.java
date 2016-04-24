@@ -7,8 +7,9 @@ import edu.uco.sdd.rocketdog.model.HealthItem;
 import edu.uco.sdd.rocketdog.model.Level;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 
 public class DefaultKeyMapping implements KeyMapping {
     
@@ -97,8 +98,22 @@ public class DefaultKeyMapping implements KeyMapping {
             case P:
                 currentLevel.addAidItem(new HealthItem(new Point2D(100, 100)), 56, 56);
                 break;
-            case O:
-                //game.displayOptionsScreen();
+            case ESCAPE:
+                if(currentLevel.getMainMenu().isVisible()){
+                   currentLevel.getMainMenu().setVisible(false);
+                }else{
+                    if(currentLevel.getHsdPane().isVisible()){
+                        currentLevel.getHsdPane().setVisible(false);
+                        currentLevel.getMainMenu().setVisible(true);
+                    }
+                    else if(currentLevel.getMenu().getCd().getCreditsPane().isVisible()){
+                        currentLevel.getMenu().getCd().hideCredits();
+                        currentLevel.getMainMenu().setVisible(true);
+                    }
+                    else
+                    {
+                    currentLevel.getMainMenu().setVisible(true);}
+                }
                 break;
         }
     }

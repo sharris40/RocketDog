@@ -32,11 +32,11 @@ public class LevelTwo extends Level {
     private Text viewportCoordinates;
     private Boolean isDone;
     private RocketDogController gameController;
-    private SoundManager soundManager;
-    private HighScores highscore;
+    //private SoundManager soundManager;
     UglyDog badguy;
+    double v=0.0;
 
-    public LevelTwo(Group root, int width, int height, SoundManager soundManager) {
+    public LevelTwo(Group root, int width, int height,SoundManager soundManager) {
         super(root, width, height);
 
         root.setAutoSizeChildren(false);
@@ -59,12 +59,10 @@ public class LevelTwo extends Level {
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
         rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
         // Initialize sound
-        soundManager = new SoundManager();
-//        soundManager.resetMediaPlayer(soundManager.getMp_bg(), "intense.mp3");
-//        soundManager.mp_bg.setVolume(0);
-//        soundManager.mp_bg.setCycleCount(100);
-//        soundManager.mp_am.setMute(true);
-
+        this.soundManager= soundManager;
+        
+        soundManager.startGameMusicForLevel(1);
+        
         // Initialize Viewport
         viewportGroup.getChildren().add(rocketDog.getSprite());
         viewportGroup.getChildren().add(rocketDog.getHitbox());
@@ -149,14 +147,7 @@ public class LevelTwo extends Level {
             super.keyMapping.getKeyMapping().handleKeyReleased(gameController, this, event, 0.0d);
         });
 
-        HighScores hm = new HighScores();
-        //HighScoreDisplay hsd= new HighScoreDisplay();
-        highscore = new HighScores();
-        System.out.println("HIGHSCORE ADD CALLED");
-        highscore.addStackPaneScores(highscore.hb);
-        highscore.hb.setAlignment(Pos.CENTER);
-        highscore.hb.resize(400, 400);
-        root.getChildren().add(highscore.hb);
+        
     }
 
     @Override
