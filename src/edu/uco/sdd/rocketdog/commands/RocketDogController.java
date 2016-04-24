@@ -122,7 +122,7 @@ public class RocketDogController {
         //shoot = new ShootRight(maxX + Math.abs(shootgroup.getTranslateX()),midY,currentLevel);
         shoot = new ShootRight(currentLevel, k);
         shoot.execute();
-
+        
     }
 
 

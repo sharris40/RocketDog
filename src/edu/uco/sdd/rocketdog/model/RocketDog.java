@@ -52,8 +52,8 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         this.healthText = new Text(0, 20, Double.toString(super.getCurrentHealth()));
         this.healthText.setFont(new Font(20));
         this.healthText.setStroke(Color.GREEN);
-        this.hsd= new HighScoreDisplay();
-        this.gameover= new GameOver();
+        this.hsd = new HighScoreDisplay();
+        this.gameover = new GameOver();
         getHitbox().setOffsetX(40);//set offset for more appropriate and adjustable hit box
         getHitbox().setOffsetY(20);
     }
@@ -73,11 +73,21 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 
         if (moving || isMovementRestricted()) {
             setPosition(new Point2D(getPosition().getX() + currentVelocity.getX(), getPosition().getY() + currentVelocity.getY()));
+            //set positon(new position, new position)for health bar
+            getHealthbar().setPosition(new Point2D(getPosition().getX() + currentVelocity.getX(), getPosition().getY() + currentVelocity.getY()-40));
+            getCurrentHealthLabelpb().setTranslateX(getPosition().getX() + currentVelocity.getX());
+            getCurrentHealthLabelpb().setTranslateY(getPosition().getY() + currentVelocity.getY() - 40);
         }
 
         if (!moving && getHorzSpeed() > 0) {
             setHorzSpeed(getHorzSpeed() - .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
+            getHealthbar().
+                    setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()-40));
+            getCurrentHealthLabelpb().setTranslateX(getPosition().getX() + getHorzSpeed());
+            getCurrentHealthLabelpb().setTranslateY(getPosition().getY() - 40);
+            
+            //set positon(new position, new position)for health bar
             //if(!moving && getRightSpeed() > 0){
             //setRightSpeed(getRightSpeed()-.3);
             //setPosition(new Point2D(getPosition().getX() + getRightSpeed(), getPosition().getY()));
@@ -86,7 +96,12 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         if (!moving && getHorzSpeed() < 0) {
             setHorzSpeed(getHorzSpeed() + .25);
             setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()));
-            //if(!moving && getLeftSpeed() < 0){
+            getHealthbar().
+                    setPosition(new Point2D(getPosition().getX() + getHorzSpeed(), getPosition().getY()-40));
+            getCurrentHealthLabelpb().setTranslateX(getPosition().getX() + getHorzSpeed());
+            getCurrentHealthLabelpb().setTranslateY(getPosition().getY() - 40);
+            
+//if(!moving && getLeftSpeed() < 0){
             //setLeftSpeed(getLeftSpeed()+.3);
             //setPosition(new Point2D(getPosition().getX() + getLeftSpeed(), getPosition().getY()));
         }
@@ -94,6 +109,10 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         if (!moving && getVertSpeed() < 0) {
             setVertSpeed(getVertSpeed() + .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
+            getCurrentHealthLabelpb().setTranslateX(getPosition().getX());
+            getCurrentHealthLabelpb().setTranslateY(getPosition().getY() + getVertSpeed() - 40);
+            getHealthbar().
+                    setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()-40));
             //if(!moving && getUpSpeed() < 0){
             //setUpSpeed(getUpSpeed() +.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getUpSpeed()));
@@ -101,6 +120,9 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         if (!moving && getVertSpeed() > 0) {
             setVertSpeed(getVertSpeed() - .25);
             setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()));
+            getHealthbar().setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getVertSpeed()-40));
+            getCurrentHealthLabelpb().setTranslateX(getPosition().getX());
+            getCurrentHealthLabelpb().setTranslateY(getPosition().getY() + getVertSpeed() - 40);
             //if(!moving && getDownSpeed() > 0){
             //setDownSpeed(getDownSpeed() -.5);
             //setPosition(new Point2D(getPosition().getX(), getPosition().getY() + getDownSpeed()));
@@ -112,18 +134,18 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
             this.gameover.showGameOVerPane();
             isTaskCompleted = false;
             Timer timer = new Timer();
-            task=new TimerTask() {
-            @Override
-            public void run() {
-                hsd.getHs().addNewScore(getScore());
-                isTaskCompleted = true;
-                timer.cancel();
-                timer.purge();
+            task = new TimerTask() {
+                @Override
+                public void run() {
+                    hsd.getHs().addNewScore(getScore());
+                    isTaskCompleted = true;
+                    timer.cancel();
+                    timer.purge();
                 }
-        };
+            };
             timer.schedule(task, 2000);
-        //
-        //
+            //
+            //
         }
 
         /**
@@ -232,10 +254,14 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         if (this.currentHealth > 0) {
             this.currentHealth -= attackStrength;
             this.healthText.setText(Double.toString(currentHealth));
+            this.getHealthbar().setHealth(currentHealth);
+            this.getCurrentHealthLabelpb().setText(Double.toString(currentHealth));
             if (this.currentHealth <= 0) {
                 this.setDead(true);
                 this.setAnimation(new SpitzDeadAnimateStrategy());
                 this.hsd.getHs().addNewScore(this.currentScore);
+                this.getHealthbar().setHealth(0);
+                this.getCurrentHealthLabelpb().setText("0");
             }
         }
     }

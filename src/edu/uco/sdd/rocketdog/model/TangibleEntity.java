@@ -10,8 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Label;
 
-public abstract class TangibleEntity implements Entity{
+public abstract class TangibleEntity implements Entity {
 
     protected double currentHealth;
     private double maximumHealth;
@@ -33,6 +34,9 @@ public abstract class TangibleEntity implements Entity{
     private final ArrayList<Observer> observers;
     private boolean movementRestricted;
     private boolean isImmune;
+    private Label currentHealthLabelpb;
+    private HealthBar healthbar;
+
     public TangibleEntity() {
         this(new Point2D(0, 0));
     }
@@ -55,6 +59,24 @@ public abstract class TangibleEntity implements Entity{
         this.stuckVelocity = new Point2D(0, 0);
         this.hitbox.setWidth(hitboxWidth);
         this.hitbox.setHeight(hitboxHeight);
+        healthbar = new HealthBar();
+        this.healthbar.displayHealthBar(true);
+        this.healthbar = new HealthBar();
+        currentHealthLabelpb = new Label();
+        currentHealthLabelpb.setTranslateX(startPosition.getX());
+        currentHealthLabelpb.setTranslateY(startPosition.getY());
+    }
+
+    public HealthBar getHealthbar() {
+        return healthbar;
+    }
+
+    public void setHealthbar(HealthBar healthbar) {
+        this.healthbar = healthbar;
+    }
+
+    public Label getCurrentHealthLabelpb() {
+        return currentHealthLabelpb;
     }
 
     public Map<EntityClass, Integer> getEntityClasses() {
@@ -67,17 +89,18 @@ public abstract class TangibleEntity implements Entity{
     protected ArrayList<MovementController> controllers = new ArrayList<>();
 
     public boolean hasCollided(TangibleEntity otherEntity) {
-        if(!otherEntity.isMultiHibox()){
+        if (!otherEntity.isMultiHibox()) {
             return getHitbox().getBoundsInParent().intersects(otherEntity.getHitbox().getBoundsInParent());
-        }
-       else{
-            for(int i = 0; i < 3 && i < otherEntity.getHitboxes().size(); i++){
-                if(getHitbox().getBoundsInParent().intersects(otherEntity.getHitboxes().get(i).getBoundsInParent()))
+        } else {
+            for (int i = 0; i < 3 && i < otherEntity.getHitboxes().size(); i++) {
+                if (getHitbox().getBoundsInParent().intersects(otherEntity.getHitboxes().get(i).getBoundsInParent())) {
                     return true;
+                }
             }
-          }
-          return false;
-       }
+        }
+        return false;
+    }
+
     public void setImmunity(boolean value) {
         isImmune = value;
     }
@@ -99,31 +122,29 @@ public abstract class TangibleEntity implements Entity{
             }
         }
         if (movementRestricted) {
-          if (stuckVelocity != null) {
-            position = position.add(stuckVelocity);
-            return true;
-          }
-          return false;
+            if (stuckVelocity != null) {
+                position = position.add(stuckVelocity);
+                return true;
+            }
+            return false;
+        } else if (acceleration == null) {
+            if (velocity == null) {
+                return false;
+            } else {
+                double x = velocity.getX();
+                if (x >= 1 || x <= -1) {
+                    position = position.add(velocity);
+                    return true;
+                }
+                return false;
+            }
         } else {
-          if (acceleration == null) {
-              if (velocity == null) {
-                  return false;
-              } else {
-                  double x = velocity.getX();
-                  if (x >= 1 || x <= -1) {
-                      position = position.add(velocity);
-                      return true;
-                  }
-                  return false;
-              }
-          } else {
-              if (velocity == null) {
-                  velocity = new Point2D(0, 0);
-              }
-              position = position.add(velocity);
-              velocity = velocity.add(acceleration);
-              return true;
-          }
+            if (velocity == null) {
+                velocity = new Point2D(0, 0);
+            }
+            position = position.add(velocity);
+            velocity = velocity.add(acceleration);
+            return true;
         }
     }
 
@@ -218,10 +239,11 @@ public abstract class TangibleEntity implements Entity{
     }
 
     public Point2D getActualVelocity() {
-        if (isMovementRestricted())
-          return stuckVelocity;
-        else
-          return velocity;
+        if (isMovementRestricted()) {
+            return stuckVelocity;
+        } else {
+            return velocity;
+        }
     }
 
     /**
@@ -251,8 +273,9 @@ public abstract class TangibleEntity implements Entity{
     }
 
     public void setMovementRestricted(boolean movementRestricted) {
-        if (!this.movementRestricted && movementRestricted)
-          stuckVelocity = velocity;
+        if (!this.movementRestricted && movementRestricted) {
+            stuckVelocity = velocity;
+        }
         this.movementRestricted = movementRestricted;
     }
 
@@ -282,7 +305,7 @@ public abstract class TangibleEntity implements Entity{
 
     public void processCollision(TangibleEntity otherEntity) {
 
-        if (levelIntersect(getHitbox(),otherEntity.getHitbox())){
+        if (levelIntersect(getHitbox(), otherEntity.getHitbox())) {
             otherEntity.getHitbox().setStroke(Color.RED);
             getHitbox().setStroke(Color.RED);
             colliding = true;
@@ -293,14 +316,13 @@ public abstract class TangibleEntity implements Entity{
         }
     }
 
-    public Bounds absoluteBounds(Node node){
+    public Bounds absoluteBounds(Node node) {
         return node.localToScene(node.getBoundsInLocal());
     }
 
-    public boolean levelIntersect(Node x, Node y){
+    public boolean levelIntersect(Node x, Node y) {
         return absoluteBounds(x).intersects(absoluteBounds(y));
     }
-
 
     public boolean isColliding() {
         return colliding;

@@ -44,6 +44,7 @@ public class DefaultKeyMapping implements KeyMapping {
                 break;      
             case J:
                 rdController.shootButton(currentLevel, KeyCode.J);
+                currentLevel.getSoundManager().playAudioClip("shoot");
                 /*int i = currentLevel.checkFiredLaser();
                 if (i == -1) {
                     break;
@@ -62,6 +63,7 @@ public class DefaultKeyMapping implements KeyMapping {
                 break;
             case K:
                 rdController.shootButton(currentLevel, KeyCode.K);
+                currentLevel.getSoundManager().playAudioClip("shootbig");
                 /*int charge = currentLevel.largeLaserCharge();
                 currentLevel.update(charge);
                 if(charge == 3){
@@ -113,6 +115,17 @@ public class DefaultKeyMapping implements KeyMapping {
                     else
                     {
                     currentLevel.getMainMenu().setVisible(true);}
+                }
+                break;
+            case M:
+                //Mute / Unmute Game Music
+                if(currentLevel.getSoundManager().isMusicEnabled()){
+                    System.out.println(currentLevel.getSoundManager().isMusicEnabled());
+                    currentLevel.getSoundManager().muteAllMusic();
+                }
+                else if(!currentLevel.getSoundManager().isMusicEnabled()){
+                    System.out.println(!currentLevel.getSoundManager().isMusicEnabled());
+                    currentLevel.getSoundManager().unmuteAllMusic();
                 }
                 break;
         }

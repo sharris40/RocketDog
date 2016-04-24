@@ -2,7 +2,6 @@ package edu.uco.sdd.rocketdog.model;
 
 import edu.uco.sdd.rocketdog.commands.RocketDogController;
 import edu.uco.sdd.rocketdog.controller.KeyMappingContext;
-import edu.uco.sdd.rocketdog.view.GameOver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.scene.layout.StackPane;
-
 
 public class Level extends Scene implements Observer, ILevel {
 
@@ -93,6 +89,7 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.getHitbox().setHeight(130);
         rocketDog.setLevel(this);
         rocketDog.setCurrentHealth(100);
+        rocketDog.getHealthbar().setMaxHealth(rocketDog.getCurrentHealth());
 
         //Invisible obstruction on screen border
         //addObstruction(new Obstruction(new Point2D(0,0)),width, 1);
@@ -130,18 +127,27 @@ public class Level extends Scene implements Observer, ILevel {
         update(rocketDog.getCurrentHealth());
         scoreText.setText("Score : " + rocketDog.getScore() + "                 Health: " + rocketDog.getCurrentHealth());
         scoreText.setFont(new Font(20));
-        
+
         menu.displayMenu(false);
         menu.displayHsd(false);
         menu.getHsd().getBackButton().setOnAction((ActionEvent) -> {
             menu.displayMenu(true);
             menu.displayHsd(false);
         });
+        rocketDog.setPosition(new Point2D(150, 600));
+        rocketDog.getCurrentHealthLabelpb().setTranslateX(150);
+        rocketDog.getCurrentHealthLabelpb().setTranslateY(600-40);
+        rocketDog.getHealthbar().setPosition(new Point2D(150, 600-40));
+        rocketDog.getCurrentHealthLabelpb().setText(Double.toString(rocketDog.getCurrentHealth()));
         viewportItems.getChildren().add(menu.getHsd().getScoresPane());
         viewportItems.getChildren().add(menu.getCd().getCreditsPane());
         viewportItems.getChildren().add(rocketDog.getGameover().getGameOVerPane());
         viewportItems.getChildren().add(getMainMenu());
-
+        rocketDog.getHealthbar().displayHealthBar(true);
+        rocketDog.getHealthbar().setHealth(rocketDog.getCurrentHealth());
+        rocketDog.getHealthbar().getHealthProgressBar().setProgress(rocketDog.getCurrentHealth());
+        viewportItems.getChildren().add(rocketDog.getHealthbar().getHealthPane());
+        viewportItems.getChildren().add(rocketDog.getCurrentHealthLabelpb());
     }
 
     public LaserAttack getLaserWeapon(int i) {
@@ -178,28 +184,32 @@ public class Level extends Scene implements Observer, ILevel {
         entities.addAll(getEnemies());
         return entities;
     }
-    public StackPane getMainMenu(){
+
+    public StackPane getMainMenu() {
         return menu.getMenupane();
     }
 
     public SoundManager getSoundManager() {
         return soundManager;
     }
-    
-    public MenuItem getMenu(){
+
+    public MenuItem getMenu() {
         return menu;
     }
-    public StackPane getHsdPane(){
+
+    public StackPane getHsdPane() {
         return this.menu.hsd.getScoresPane();
     }
+
     public void addEnemy(Enemy enemy, double width, double height) {
         //Setup enemy hitbox information
         enemy.getHitbox().setWidth(width);
         enemy.getHitbox().setHeight(height);
-        if(enemy instanceof DeliveryMan)
+        if (enemy instanceof DeliveryMan) {
             enemy.setCurrentHealth(100);
-        else
+        } else {
             enemy.setCurrentHealth(10);
+        }
         enemy.setLevel(this);
 
         //Add enemy information to level      
@@ -210,7 +220,7 @@ public class Level extends Scene implements Observer, ILevel {
         } else if (enemy.isMultiHibox()) {
             enemy.getHitboxes().stream().forEach((hitbox) -> {
                 this.levelItems.getChildren().add(hitbox);
-            });      
+            });
         }
     }
 
@@ -224,7 +234,6 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the enemy in its children
         //before ting to remove
-
         if (!enemy.isMultiHibox()) {
             this.levelItems.getChildren().remove(enemy.getHitbox());
         } else if (enemy.isMultiHibox()) {
@@ -503,25 +512,23 @@ public class Level extends Scene implements Observer, ILevel {
         if (rocketDog.getPosition().getX() > 500 && rocketDog.getLuckAttribute() > 1 && Math.random() > 0.9991) {
             this.addAidItem(new HealthItem(new Point2D(100, 1)), 56, 56);
         }
-        
+
         //Set rocketDog hitbox visibility
         rocketDog.getHitbox().setVisible(visibleHitBoxes);
         rocketDog.getHealthText().setVisible(visibleHitBoxes);
         rocketDog.addObserver(this);
 
-
         Map<Entity, Boolean> changed = new HashMap<>();
         changed.put(rocketDog, true);
 
         //enemies.stream().forEach((enemy) -> {
-            //Update enemy
-           // enemy.update();
+        //Update enemy
+        // enemy.update();
         //});
-
         //Update the weapon attack
         weapon.stream().forEach((laser) -> {
             //checkFiredLaser();
-            if(laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0){
+            if (laser.getPosition().getX() > super.getWidth() || laser.getPosition().getX() < 0) {
                 laser.setPos(0, -45);
                 laser.setDead(false);
                 laser.setVisableOff();
@@ -529,7 +536,6 @@ public class Level extends Scene implements Observer, ILevel {
             }
             laser.update();
             laser.getHitbox().setVisible(visibleHitBoxes);
-
 
             for (int i = 0; i < enemies.size(); i++) {
                 if (laser.hasCollided(enemies.get(i))) {
@@ -553,7 +559,7 @@ public class Level extends Scene implements Observer, ILevel {
         //weapon.getHitbox().setVisible(visibleHitBoxes);
         //Update the large weapon attack
         largeWeapon.stream().forEach((largeLaser) -> {
-            if(largeLaser.getPosition().getX() > super.getWidth() || largeLaser.getPosition().getX() < 0){
+            if (largeLaser.getPosition().getX() > super.getWidth() || largeLaser.getPosition().getX() < 0) {
                 largeLaser.setPos(0, -150);
                 largeLaser.setDead(false);
                 largeLaser.setVisableOff();
@@ -667,6 +673,7 @@ public class Level extends Scene implements Observer, ILevel {
             aidItem.processCollision(rocketDog);
 
             if (aidItem.isDead()) {   //aid item has been collected
+                soundManager.playAudioClip("got_item");
                 rocketDog.setScore(rocketDog.getScore() + 5);
                 rocketDog.setPowerAttribute(25);
                 rocketDog.setDefenseAttribute(50);
@@ -758,6 +765,8 @@ public class Level extends Scene implements Observer, ILevel {
                 + "\nAgility: " + rocketDog.getAgilityAttribute()
                 + "\nLuck:    " + rocketDog.getLuckAttribute()
                 + "\nCharisma: " + rocketDog.getChrismaAttribute());
+        this.rocketDog.getHealthbar().setHealth(rocketDog.getCurrentHealth());
+        this.rocketDog.getCurrentHealthLabelpb().setText(Double.toString(rocketDog.getCurrentHealth()));
     }
 
     @Override

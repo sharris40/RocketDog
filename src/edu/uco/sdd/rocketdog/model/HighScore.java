@@ -47,15 +47,7 @@ public class HighScore {
 //    GridPane grid;
 
     public HighScore() {
-//        try {
         scoresList = new ArrayList<>();
-        //adding records to our file and arraylist
-//            ScoreInformation s1 = new ScoreInformation("lilian", 100);
-//            ScoreInformation s2 = new ScoreInformation("kkk", 500);
-//            ScoreInformation s3 = new ScoreInformation("appp", 700);
-//            addNewScore(s1);
-//            addNewScore(s2);
-//            addNewScore(s3);
         file = new File(fileName);
         if (!file.exists()) {
             try {
@@ -65,11 +57,39 @@ public class HighScore {
             }
         }
         scoresList = getAllRecords();
-//        } catch (IOException ex) {
-//            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
+    }
+
+    public void addFillerScores() {
+//                adding records to our file and arraylist
+        try {
+            ScoreInformation s0 = new ScoreInformation("s0", 111);
+            ScoreInformation s1 = new ScoreInformation("s1", 300);
+            ScoreInformation s2 = new ScoreInformation("s2", 500);
+            ScoreInformation s3 = new ScoreInformation("s3", 700);
+            ScoreInformation s4 = new ScoreInformation("s4", 200);
+            ScoreInformation s5 = new ScoreInformation("s5", 400);
+            ScoreInformation s6 = new ScoreInformation("s6", 650);
+            ScoreInformation s7 = new ScoreInformation("s7", 1500);
+            ScoreInformation s8 = new ScoreInformation("s8", 70);
+            ScoreInformation s9 = new ScoreInformation("s9", 369);
+            ScoreInformation s11 = new ScoreInformation("s11", 2);
+
+            addNewScore(s1);
+            addNewScore(s2);
+            addNewScore(s3);
+            addNewScore(s4);
+            addNewScore(s5);
+            addNewScore(s6);
+            addNewScore(s7);
+            addNewScore(s8);
+            addNewScore(s9);
+            addNewScore(s11);
+        } catch (IOException ex) {
+            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public int getCurrentSize(ArrayList<ScoreInformation> scoresList) {
@@ -126,14 +146,14 @@ public class HighScore {
         currentSize = scoresList.size();
         if (!scoresList.isEmpty()) {
             minScore = scoresList.get(0).getScore();
-            maxScore = scoresList.get(scoresList.size()-1).getScore();
+            maxScore = scoresList.get(scoresList.size() - 1).getScore();
         }
     }
 
     public ArrayList<ScoreInformation> getAllRecords() {
         loadRecordsFromFile();
         sortRecord();
-        System.out.println("CurrentSize="+currentSize+" | MinScore= "+minScore+" | MaxScore= "+maxScore);
+        System.out.println("CurrentSize=" + currentSize + " | MinScore= " + minScore + " | MaxScore= " + maxScore);
         return scoresList;
     }
 
@@ -190,7 +210,7 @@ public class HighScore {
     public void addNewScore(int score) {
         String name = "";
 
-        if (score > scoresList.get(scoresList.size() - 1).getScore()) {
+        if (scoresList.isEmpty() || score >= scoresList.get(scoresList.size() - 1).getScore()) {
             name = JOptionPane.showInputDialog("New high score!  Enter your name:");
 
             if (name.isEmpty()) {

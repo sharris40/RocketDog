@@ -68,7 +68,16 @@ public final class SoundManager {
         myMusicInformation = new MusicInformation(bgsource, amsource);
         return myMusicInformation;
     }
-
+    public void muteAllMusic(){
+        this.getBgMusicPlayer().mutePlayer();
+        this.getAmMusicPlayer().mutePlayer();
+        this.setMusicEnabled(false);
+    }
+    public void unmuteAllMusic(){
+        this.getBgMusicPlayer().unmutePlayer();
+        this.getAmMusicPlayer().unmutePlayer();
+        this.setMusicEnabled(true);
+    }
     public void startGameMusicForLevel(int levelNumber) {
         double v1 = 0, v2 = 0;
         myMusicInformation = musicForLevel(levelNumber);
@@ -123,6 +132,7 @@ public final class SoundManager {
         addSound("horror", "horror.mp3");
         addSound("intense", "intense.mp3");
         addSound("bg", "bgmusic.mp3");
+        addSound("shootbig", "ray_gun.mp3");
     }
 
     public boolean isMusicEnabled() {
