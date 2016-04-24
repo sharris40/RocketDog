@@ -81,17 +81,6 @@ public class ObjectTraverseController extends AccelerationController {
         return false;
     }
 
-    private boolean positionBlockedDebug(Bounds bounds) {
-        Bounds modifiedBounds = new BoundingBox(bounds.getMinX() + 4, bounds.getMinY() + 4, bounds.getWidth() - 8, bounds.getHeight() - 8);
-        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
-            if (modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
-                obstruction.getSprite().setImage(new Image("Dog.png"));
-                return true;
-            }
-        }
-        return false;
-    }
-
     private List<Point2D> getPath(Map<Point, Point> from, Point end) {
         LinkedList<Point2D> currentPath = new LinkedList<>();
         currentPath.add(new Point2D(end.getX(), end.getY()));
@@ -105,7 +94,6 @@ public class ObjectTraverseController extends AccelerationController {
 
     private List<Point2D> astar(Point start, double xSpacing, double ySpacing, Point beforeStart) {
         Point dest = new Point(destPoint, start.getXRange(), start.getYRange());
-        System.out.println("From " + start.getX() + " " + start.getY() + " to " + dest.getX() + " " + dest.getY());
         Set<Point> closed = new HashSet<>();
         Set<Point> open = new HashSet<>();
         open.add(start);
@@ -130,7 +118,6 @@ public class ObjectTraverseController extends AccelerationController {
             Point previous = from.get(current.getLocation());
             if (previous == null)
                 previous = beforeStart;
-            System.out.println(current.getLocation().getX() + " " + current.getLocation().getY());
             if (dest.closeTo(current.getLocation()))
                 return getPath(from, current.getLocation());
             open.remove(current.getLocation());
@@ -209,7 +196,7 @@ public class ObjectTraverseController extends AccelerationController {
             y += velAdd.getY();
             controlledBounds = new BoundingBox(x, y, width, height);
             velAdd = velAdd.add(nextAcceleration);
-        } while (positionBlockedDebug(controlledBounds));
+        } while (positionBlocked(controlledBounds));
         destPoint = new Point2D(x, y);
         Point start = new Point(Math.round(cbtemp.getMinX()), Math.round(cbtemp.getMinY()));
         start.setXRange(cbtemp.getWidth() / 4.);
@@ -232,59 +219,6 @@ public class ObjectTraverseController extends AccelerationController {
 
         }
         path = astar(start, (xRange < 8) ? 8. : xRange, (yRange < 8) ? 8. : yRange, previous);
-        /*boolean blockedUp = true, blockedDown = true, blockedLeft = true, blockedRight = true;
-        if (cbtemp.getMinX()  > targetBounds.getMaxX() || cbtemp.getMaxX() < targetBounds.getMinX()) {
-            blockedUp = false;
-            blockedDown = false;
-        } else if (nextVelocity.getY() > 0) { // moving down
-            blockedUp = false;
-        } else {
-            blockedDown = false;
-        }
-        if (cbtemp.getMinY() > targetBounds.getMaxY() || cbtemp.getMaxY() < targetBounds.getMinY()) {
-            blockedLeft = false;
-            blockedRight = false;
-        } else if (nextVelocity.getX() > 0) { // moving right
-            blockedLeft = false;
-        } else {
-            blockedRight = false;
-        }
-        if (blockedUp || blockedDown) {
-            // check left first
-            Point2D pointLeft1 = new Point2D(targetBounds.getMinX() - cbtemp.getWidth(), cbtemp.getMinY());
-            Point2D pointLeft2 = new Point2D(pointLeft1.getX(), destPoint.getY());
-            // check right first
-            Point2D pointRight1 = new Point2D(targetBounds.getMaxX(), cbtemp.getMinY());
-            Point2D pointRight2 = new Point2D(pointRight1.getX(), destPoint.getY());
-            double distLeft = destPoint.getX() - pointLeft2.getX() + Math.abs(pointLeft2.getY() - pointLeft1.getY()) + cbtemp.getMinX() - pointLeft1.getX();
-            double distRight = pointRight2.getX() - destPoint.getX() + Math.abs(pointRight2.getY() - pointRight1.getY()) + pointRight1.getX() - cbtemp.getMinX();
-            if (distLeft < distRight) {
-                path.add(pointLeft1);
-                path.add(pointLeft2);
-                path.add(destPoint);
-            } else {
-                path.add(pointRight1);
-                path.add(pointRight2);
-            }
-        } else if (blockedLeft || blockedRight) {
-            // check up first
-            Point2D pointUp1 = new Point2D(cbtemp.getMinX(), targetBounds.getMinY() - cbtemp.getHeight());
-            Point2D pointUp2 = new Point2D(destPoint.getX(), pointUp1.getY());
-            // check down first
-            Point2D pointDown1 = new Point2D(cbtemp.getMinX(), targetBounds.getMaxY());
-            Point2D pointDown2 = new Point2D(destPoint.getX(), pointDown1.getY());
-            double distUp = destPoint.getY() - pointUp2.getY() + Math.abs(pointUp2.getX() - pointUp1.getX()) + cbtemp.getMinY() - pointUp1.getY();
-            double distDown = pointDown2.getY() - destPoint.getY() + Math.abs(pointDown2.getX() - pointDown1.getX()) + pointDown1.getY() - cbtemp.getMinY();
-            if (distUp < distDown) {
-                path.add(pointUp1);
-                path.add(pointUp2);
-                path.add(destPoint);
-            } else {
-                path.add(pointDown1);
-                path.add(pointDown2);
-            }
-        }
-        path.add(destPoint);*/
         lastPosition = controlledObject.getPosition();
     }
 
