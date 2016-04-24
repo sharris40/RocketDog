@@ -91,7 +91,8 @@ public class ObjectTraverseController extends AccelerationController {
         totalScore.put(start, dest.getDistance(start), 0);
         Point[] nextPoints = new Point[3];
         double[] nextSpacing = new double[3];
-        while (!open.isEmpty()) {
+        int attempts = 0;
+        while (!open.isEmpty() && attempts++ < 16384) {
             List<Node> nodes = totalScore.getNodeList();
             Node current = null;
             for (Node node : nodes) {
