@@ -213,6 +213,10 @@ public class ObjectTraverseController extends AccelerationController {
     public boolean process(Map<Entity, Boolean> changedEntities) {
         Point2D newPosition = controlledObject.getPosition();
         boolean nextPoint = false;
+        if (path == null) {  // Oh no; stuck in a wall
+            path = new LinkedList<>();
+            path.add(destPoint);
+        }
         Point2D vNew = newPosition.subtract(path.get(0));
         Point2D vOld = lastPosition.subtract(path.get(0));
         if (vNew.magnitude() < 0.25) {
