@@ -25,17 +25,17 @@ public class OrderedNodeMap {
     }
 
     public Double get(Object key) {
-        if (isEmpty() || key == null || !(key instanceof Point2D))
-            return null;
+        if (isEmpty() || key == null || !(key instanceof Point))
+            return Double.POSITIVE_INFINITY;
         for (Node n : nodes) {
-            if (n.getLocation().equals(key))
+            if (n.getLocation().closeTo((Point)key))
                 return n.getWeight();
         }
-        return null;
+        return Double.POSITIVE_INFINITY;
     }
 
-    public void put(Point2D key, Double value) {
-        if (isEmpty() || key == null || value == null)
+    public void put(Point key, Double value, int preference) {
+        if (key == null || value == null)
             return;
         if (value < 0 || (value.isNaN() && !value.isInfinite()))
             return;
@@ -44,7 +44,7 @@ public class OrderedNodeMap {
             pos.remove();
         }
         pos = findPosition(value);
-        pos.add(new Node(key, value));
+        pos.add(new Node(key, value, preference));
     }
 
     private ListIterator<Node> findPosition(Double d) {
@@ -61,18 +61,19 @@ public class OrderedNodeMap {
         ListIterator<Node> iterator = nodes.listIterator();
         while (iterator.hasNext()) {
             if (iterator.next().getWeight() >= d) {
+                iterator.previous();
                 return iterator;
             }
         }
         return iterator;
     }
 
-    public ListIterator<Node> findPosition(Point2D key) {
+    public ListIterator<Node> findPosition(Point key) {
         if (key == null)
             return null;
         ListIterator<Node> iterator = nodes.listIterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getLocation().equals(key)) {
+            if (iterator.next().getLocation().closeTo(key)) {
                 return iterator;
             }
         }

@@ -212,7 +212,7 @@ public class Level extends Scene implements Observer, ILevel {
     }
 
     public void removeAidItem(AidItem aidItem) {
-        //Make sure the ArrayList has the item within it 
+        //Make sure the ArrayList has the item within it
         //before tyring to remove
 
         //Make sure the root has the item in its children
@@ -238,7 +238,7 @@ public class Level extends Scene implements Observer, ILevel {
     }
 
     public void removeActiveAidItem(ActiveAidItem activeAidItem) {
-        //Make sure the ArrayList has the item within it 
+        //Make sure the ArrayList has the item within it
         //before tyring to remove
 
         //Make sure the root has the item in its children
@@ -266,7 +266,7 @@ public class Level extends Scene implements Observer, ILevel {
     }
 
     public void removeHazard(Hazard hazard) {
-        //Make sure the ArrayList has the item within it 
+        //Make sure the ArrayList has the item within it
         //before tyring to remove
         if (Hazards.indexOf(hazard) > -1) {
             Hazards.remove(hazard);
@@ -313,7 +313,7 @@ public class Level extends Scene implements Observer, ILevel {
     }
 
     public void removeObstruction(Obstruction obstruction) {
-        //Make sure the ArrayList has the item within it 
+        //Make sure the ArrayList has the item within it
         //before tyring to remove
         if (Obstructions.indexOf(obstruction) > -1) {
             Obstructions.remove(obstruction);
