@@ -59,26 +59,13 @@ public class ObjectTraverseController extends AccelerationController {
         this.nextAcceleration = nextAcceleration;
     }
 
-    /*private boolean isBlockedVertical(Bounds self, Bounds obstacle, Point2D loc, Point2D dest) {
-        Point2D toDest = dest.subtract(loc).normalize();
-        Point2D nextLoc = loc.add(toDest);
-        return !(nextLoc.getY() > obstacle.getMaxY() || nextLoc.getY() + self.getHeight() < obstacle.getMinY());
-    }
-
-    private boolean isBlockedHorizontal(Bounds self, Bounds obstacle, Point2D loc, Point2D dest) {
-        Point2D toDest = dest.subtract(loc).normalize();
-        Point2D nextLoc = loc.add(toDest);
-        return !(nextLoc.getX() > obstacle.getMaxX() || nextLoc.getX() + self.getWidth() < obstacle.getMinX());
-    }*/
-
     private boolean positionBlocked(Bounds bounds) {
         Bounds modifiedBounds = new BoundingBox(bounds.getMinX() + 4, bounds.getMinY() + 4, bounds.getWidth() - 8, bounds.getHeight() - 8);
-        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
-            if (modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
-                return true;
-            }
-        }
-        return false;
+        return    controlledObject.getLevel().getObstructions().stream().anyMatch((obstruction) -> (
+                    modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())
+            )) || controlledObject.getLevel().getHazards().stream().anyMatch((hazard) -> (
+                    modifiedBounds.intersects(hazard.getHitbox().getBoundsInParent()))
+            );
     }
 
     private List<Point2D> getPath(Map<Point, Point> from, Point end) {
@@ -203,7 +190,7 @@ public class ObjectTraverseController extends AccelerationController {
         start.setYRange(cbtemp.getHeight() / 4.);
         double xRange = cbtemp.getWidth() / 4. + 2;
         double yRange = cbtemp.getHeight() / 4. + 2;
-        Point previous = null;
+        Point previous;
         if (Math.abs(nextVelocity.getY()) > Math.abs(nextVelocity.getX())) {
             if (nextVelocity.getY() > 0) {
                 previous = start.above((yRange < 8) ? 8. : yRange);

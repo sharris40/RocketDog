@@ -703,6 +703,10 @@ public class Level extends Scene implements Observer, ILevel {
         return (ArrayList<Obstruction>) Obstructions.clone();
     }
 
+    public ArrayList<Hazard> getHazards() {
+        return (ArrayList<Hazard>) Hazards.clone();
+    }
+
     public void setRocketDog(RocketDog rocketDog) {
         this.rocketDog = rocketDog;
     }

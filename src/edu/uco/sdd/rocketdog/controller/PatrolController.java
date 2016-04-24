@@ -62,12 +62,11 @@ public class PatrolController extends AccelerationController {
 
     private boolean positionBlocked(Bounds bounds) {
         Bounds modifiedBounds = new BoundingBox(bounds.getMinX() + 4, bounds.getMinY() + 4, bounds.getWidth() - 8, bounds.getHeight() - 8);
-        for (Obstruction obstruction : controlledObject.getLevel().getObstructions()) {
-            if (modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())) {
-                return true;
-            }
-        }
-        return false;
+        return    controlledObject.getLevel().getObstructions().stream().anyMatch((obstruction) -> (
+                    modifiedBounds.intersects(obstruction.getHitbox().getBoundsInParent())
+            )) || controlledObject.getLevel().getHazards().stream().anyMatch((hazard) -> (
+                    modifiedBounds.intersects(hazard.getHitbox().getBoundsInParent()))
+            );
     }
 
   @Override
