@@ -53,7 +53,7 @@ class ShootRight extends AbstractCommand {
                 currentLevel.update(charge);
                 if(charge == 3){
                     int j = currentLevel.checkFiredLargerLaser();
-                    if (j == -1) {}
+                    //if (j == -1) {}
                     currentLevel.getLargeLaserWeapon(j).getHitbox().setStroke(Color.GREEN);
                     currentLevel.getLargeLaserWeapon(j).setVisableOn();
                     if (currentLevel.getRocketDog().getSprite().getScaleX() == -1) {

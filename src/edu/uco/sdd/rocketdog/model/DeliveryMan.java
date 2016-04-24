@@ -46,6 +46,7 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
     private Boolean initialized = false;
     private RocketDog rocketDog;
     private Explosion explosions;
+    private int invulCount = 0;
 
     Random random;
 
@@ -58,15 +59,24 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         setPosition(new Point2D(x,y));
         setSprite(new ImageView(animating.getImage()));
         getSprite().setViewport(animating.getCurrentView());
+        getSprite().setTranslateX(x);
+        getSprite().setLayoutX(x);
+        getSprite().setTranslateX(y);
+        getSprite().setLayoutY(y);
         random = new Random();
         this.group = group;
         projectiles = new ArrayList();
         debugText = new Text();
         debugText.setFont(new Font(20));
-        group.getChildren().add(debugText);
+        //group.getChildren().add(debugText);
         debugText.setLayoutX(1500);
         debugText.setLayoutY(200);
 
+        getSprite().setLayoutX(x);
+        getSprite().setLayoutY(y);
+        getHitbox().setLayoutX(x);
+        getHitbox().setLayoutY(x);
+ 
         this.setMultiHibox(true);
         hitboxes = new ArrayList();
         Hitbox hitbox = new Hitbox(this.getPosition().getX(), this.getPosition().getY());
@@ -115,17 +125,17 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
         } else {
             getSprite().setScaleX(1);
         }
-        getSprite().setTranslateX(getPosition().getX());
-        getSprite().setTranslateY(getPosition().getY());
+        getSprite().setLayoutX(getPosition().getX());
+        getSprite().setLayoutY(getPosition().getY());
 
-        getHitbox().setTranslateX(getPosition().getX());
-        getHitbox().setTranslateY(getPosition().getY());
+        getHitbox().setLayoutX(getPosition().getX());
+        getHitbox().setLayoutY(getPosition().getY());
 
         getSprite().setViewport(animating.getCurrentView());
 
         hitboxes.forEach((hitbox) -> {
-            hitbox.setTranslateX(getSprite().getTranslateX());
-            hitbox.setTranslateY(getSprite().getTranslateY());
+            hitbox.setLayoutX(this.getSprite().getLayoutX());
+            hitbox.setLayoutY(getSprite().getLayoutY());
             hitbox.resize(this);
         });
 
@@ -158,6 +168,7 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
 
     @Override
     public void processCollision(TangibleEntity te){
+      if (invulCount > 10){
         hitboxes.stream().forEach((hitbox) -> {
             if (levelIntersect(hitbox,te.getHitbox())) {
             te.getHitbox().setStroke(Color.RED);
@@ -169,7 +180,9 @@ public class DeliveryMan extends Enemy implements Attacker, IAnimateStrategy {
             setColliding(false);
         }
         });
-
+      } else {
+          invulCount++;
+      }
     }
 
     public void fireBox(){

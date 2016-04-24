@@ -57,7 +57,7 @@ public class LevelTwo extends Level {
         // Initialize ROcketdog
         //rocketdog = new RocketDog();
         //rocketdog.setAnimation(new SpitzIdleAnimateStrategy());
-        //rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
+        rocketDog.getSprite().setTranslateY(rocketDog.getSprite().getTranslateY() + 500);
         // Initialize sound
         this.soundManager= soundManager;
         
@@ -89,6 +89,11 @@ public class LevelTwo extends Level {
         LevelTwoLayout l = new LevelTwoLayout(this);
         l.addLayout();
 
+        //Surfaces
+        Ice ice = new Ice(500,100);
+        ice.setPosition(new Point2D(1500,150));
+        addSurface(ice);
+
         // Bad Guys
         EntityClass enemy = new EntityClass("Enemy");
         enemy.setRelationship(getPlayer(), EntityClass.Relationship.ENEMY);
@@ -96,7 +101,6 @@ public class LevelTwo extends Level {
         addEnemy(new Enemy.Builder("/Ugly Dog.png", 32, 32).setX(1692).setY(224).setStart(50).setEnd(650).setRange(300).setEntityClass(enemy).setLevel(this).build(), 32, 32);
         addEnemy(new DeliveryMan(2000, 400, backgroundGroup), 400, 400);
 
-        //Surfaces
         // Add Viewport + Background to root
         root.getChildren().add(backgroundGroup);
         root.getChildren().add(viewportGroup);
