@@ -190,7 +190,7 @@ public class HighScore {
     public void addNewScore(int score) {
         String name = "";
 
-        if (score > scoresList.get(scoresList.size() - 1).getScore()) {
+        if (scoresList.size() > 0 && score > scoresList.get(scoresList.size() - 1).getScore()) {
             name = JOptionPane.showInputDialog("New high score!  Enter your name:");
 
             if (name.isEmpty()) {

@@ -151,6 +151,8 @@ public class SplashLevel extends Level {
         hboxBottom.setAlignment(Pos.CENTER);
         addStackPaneCopyRight(hboxBottom);
         root.getChildren().add(bp);
+        soundManager.bgMusicPlayer.setVolumePlayer(0.015);
+        soundManager.amMusicPlayer.setVolumePlayer(0.015);
     }
 
     private void loadImages() {

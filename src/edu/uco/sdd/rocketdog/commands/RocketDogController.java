@@ -20,7 +20,7 @@ public class RocketDogController {
     private final int viewportMaxX;
     private final int levelWidth;
     private final int levelHeight;
-    private final double focalSpeed;
+    private final int focalSpeed;
 
     private final Group topLevelBackgroundGroup; // Background that will get scrolled
     private final Group bulletGroup; // Bullets go in this Group
@@ -81,6 +81,8 @@ public class RocketDogController {
             }
         } else if (maxX + focalSpeed > viewportMaxX/2) {
             scrollRight.execute();
+            ScrollLeft temp = new ScrollLeft(Level.viewportItems, this.focalSpeed);
+            temp.execute();
         } else {
             moveRight.execute();
         }
@@ -95,6 +97,8 @@ public class RocketDogController {
         }
         if (minX - focalSpeed < viewportMinX) {
             scrollLeft.execute();
+            ScrollRight temp = new ScrollRight(Level.viewportItems, this.focalSpeed, levelWidth);
+            temp.execute();
         } else {
             moveLeft.execute();
         }

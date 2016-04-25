@@ -19,7 +19,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
 
     private IAnimateStrategy animating;
     private final Text healthText;
-    private static final double MAX_HEALTH = 500;
+    private static final double MAX_HEALTH = 10000;
     private int powerAttribute;
     private int agilityAttribute;
     private int defenseAttribute;
@@ -41,7 +41,7 @@ public class RocketDog extends TangibleEntity implements IAnimateStrategy, Attac
         setMaximumHealth(MAX_HEALTH);
         currentHealth = MAX_HEALTH;
         powerAttribute = 1;
-        agilityAttribute = 0;
+        agilityAttribute = 1;
         defenseAttribute = 1;
         luckAttribute = 1;
         charismaAttribute = 1;

@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
 
@@ -38,10 +39,10 @@ public class Level extends Scene implements Observer, ILevel {
     private boolean visibleHitBoxes;
     private Group root;
     private Group levelItems;
-    private Group viewportItems;
+    public static Group viewportItems;
     public KeyMappingContext keyMapping;
     protected boolean isDone;
-    private Text scoreText;
+    public static Text scoreText;
     private int largeLaserCharge;
     int loadDelay = 0;
     final public ArrayList<LaserAttack> weapon;
@@ -92,7 +93,7 @@ public class Level extends Scene implements Observer, ILevel {
         rocketDog.getHitbox().setWidth(130);
         rocketDog.getHitbox().setHeight(130);
         rocketDog.setLevel(this);
-        rocketDog.setCurrentHealth(100);
+        rocketDog.setCurrentHealth(10000);
 
         //Invisible obstruction on screen border
         //addObstruction(new Obstruction(new Point2D(0,0)),width, 1);
@@ -126,10 +127,10 @@ public class Level extends Scene implements Observer, ILevel {
         }
 
         //levelItems.getChildren().add(rocketDog.getHitbox());
-        viewportItems.getChildren().add(scoreText);
-        update(rocketDog.getCurrentHealth());
         scoreText.setText("Score : " + rocketDog.getScore() + "                 Health: " + rocketDog.getCurrentHealth());
+        update(rocketDog.getCurrentHealth());
         scoreText.setFont(new Font(20));
+        viewportItems.getChildren().add(scoreText);
         
         menu.displayMenu(false);
         menu.displayHsd(false);
@@ -269,8 +270,8 @@ public class Level extends Scene implements Observer, ILevel {
         activeAidItem.setCurrentHealth(3);
         //Add active powerup information to level
         ActiveAidItems.add(activeAidItem);
-        viewportItems.getChildren().add(activeAidItem.getSprite());
-        viewportItems.getChildren().add(activeAidItem.getHitbox());
+        levelItems.getChildren().add(activeAidItem.getSprite());
+        levelItems.getChildren().add(activeAidItem.getHitbox());
     }
 
     public void removeActiveAidItem(ActiveAidItem activeAidItem) {
@@ -279,14 +280,14 @@ public class Level extends Scene implements Observer, ILevel {
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (viewportItems.getChildren().indexOf(activeAidItem.getSprite()) > -1) {
-            viewportItems.getChildren().remove(activeAidItem.getSprite());
+        if (levelItems.getChildren().indexOf(activeAidItem.getSprite()) > -1) {
+            levelItems.getChildren().remove(activeAidItem.getSprite());
         }
 
         //Make sure the root has the item in its children
         //before ting to remove
-        if (viewportItems.getChildren().indexOf(activeAidItem.getHitbox()) > -1) {
-            viewportItems.getChildren().remove(activeAidItem.getHitbox());
+        if (levelItems.getChildren().indexOf(activeAidItem.getHitbox()) > -1) {
+            levelItems.getChildren().remove(activeAidItem.getHitbox());
         }
     }
 
@@ -537,8 +538,6 @@ public class Level extends Scene implements Observer, ILevel {
                     laser.setDead(false);
                     laser.setVisableOff();
                     laser.setVel(0, 0);
-                    rocketDog.setScore(rocketDog.getScore() + 20);
-                    update(rocketDog.getScore());
                     enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 2);
                     update(enemies.get(i).getCurrentHealth());
                     if (enemies.get(i).currentHealth <= 0) {
@@ -568,8 +567,6 @@ public class Level extends Scene implements Observer, ILevel {
                     largeLaser.setDead(false);
                     largeLaser.setVisableOff();
                     largeLaser.setVel(0, 0);
-                    rocketDog.setScore(rocketDog.getScore() + 50);
-                    update(rocketDog.getScore());
                     enemies.get(i).setCurrentHealth(enemies.get(i).getCurrentHealth() - 5);
                     update(enemies.get(i).getCurrentHealth());
                     if (enemies.get(i).currentHealth <= 0) {
@@ -750,6 +747,7 @@ public class Level extends Scene implements Observer, ILevel {
     @Override
     public void update(double currentHealth) {
         //Update score
+        if(rocketDog.getCurrentHealth() < 0) {rocketDog.setCurrentHealth(0);}
         this.scoreText.setText(
                 "Score : " + rocketDog.getScore() + "                 Health: " + rocketDog.getCurrentHealth()
                 + "\nPower:   " + rocketDog.getPowerAttribute()
